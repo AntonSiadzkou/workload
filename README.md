@@ -48,32 +48,51 @@ System for tracking of employees and their workloads by department.
 -	create reports about employees’ workloads by the department on monthly basis
 -	create reports on the availability of employees in the current or any other month
 
-`GET /users/`
-`GET	/user/{id}`
-`POST /users`
-`PUT	/users/{id}`
-`DELETE /users/{id}`
+`GET /users/` - get all users
 
-`GET /projects`
-`GET /projects/{id}`
-`POST /projects`
-`PUT /projects/{id}`
-`DELETE /projects/{id}`
+`GET	/user/{id}` - get a spesific user
 
-`GET /users/{id}/projects`
-`GET /users/{id}/projects/current`
-`PUT /users/{userId}/projects/{projectId}`
-`DELETE /users/{userId}/projects/{projectId}`
-`GET	/projects/{id}/users`
-`PUT /projects/{projectId}/users/{userId}`
-`DELETE /projects/{projectId}/users/{userId}`
+`POST /users` - create a new user
 
-`GET	/departments`
-`GET	/departments/{id}`
-`GET	/departments/{id}/users`
-`POST /departments`
-`PUT	/departments/{id}`
-`DELETE /departments/{id}`
+`PUT	/users/{id}` - update a specific user
+
+`DELETE /users/{id}` - delete (make inactive) a specific user
+
+`GET /projects` - get all projects
+
+`GET /projects/{id}` - get a specific project
+
+`POST /projects` - create a new project
+
+`PUT /projects/{id}` - update a specific project
+
+`DELETE /projects/{id}` - delete a specific project
+
+`GET /users/{id}/projects` - get all projects assigned to a specific user
+
+`GET /users/{id}/projects/current` - get current projects assigned to a specific user
+
+`PUT /users/{userId}/projects/{projectId}` - assign a specific user to a specific project
+
+`DELETE /users/{userId}/projects/{projectId}` - remove a specific user from a specific project
+
+`GET	/projects/{id}/users` - get all users assigned to a specific project 
+
+`PUT /projects/{projectId}/users/{userId}` - assign a specific user to a specific project
+
+`DELETE /projects/{projectId}/users/{userId}`- remove a specific user from a specific project
+
+`GET	/departments` - get all departments
+
+`GET	/departments/{id}` - get a specific department
+
+`GET	/departments/{id}/users` - get all users in a specific department
+
+`POST /departments` - create a new department
+
+`PUT	/departments/{id}` - update a specific department
+
+`DELETE /departments/{id}` - delete a specific department
 
 `GET /users/available/{days}`
 Available users within period (at this moment if days was not specified)
