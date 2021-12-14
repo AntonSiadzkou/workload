@@ -1,5 +1,6 @@
 package com.leverx.workload.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "projects")
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(value = {"users"})
 public class Project {
 
   @Id

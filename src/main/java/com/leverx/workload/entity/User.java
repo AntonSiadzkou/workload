@@ -1,11 +1,10 @@
 package com.leverx.workload.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @Data
 @NoArgsConstructor
+@JsonIgnoreProperties(value = {"projects"})
 public class User {
 
   @Id
@@ -40,18 +40,17 @@ public class User {
 
   private String position;
 
-  @ManyToOne private Department department;
+  @ManyToOne
+  @JoinColumn(name = "id_department")
+  private Department department;
 
-  @Enumerated(value = EnumType.STRING)
-  private Role role;
+  private String role;
 
   @Column(name = "is_active")
   private boolean active;
 
   @ManyToMany
-  @JoinTable(
-      name = "user_project",
-      joinColumns = @JoinColumn(name = "id_user"),
+  @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "id_user"),
       inverseJoinColumns = @JoinColumn(name = "id_project"))
   private List<Project> projects = new ArrayList<>();
 }

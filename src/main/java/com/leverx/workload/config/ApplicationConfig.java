@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -47,7 +48,7 @@ public class ApplicationConfig {
   public LocalSessionFactoryBean sessionFactory() {
     LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
     sessionFactory.setDataSource(dataSource());
-    sessionFactory.setPackagesToScan("com.leverx.entity");
+    sessionFactory.setPackagesToScan("com.leverx.workload.entity");
     Properties hibernateProps = new Properties();
     hibernateProps.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
     hibernateProps.setProperty("hibernate.show_sql", "true");
@@ -69,4 +70,19 @@ public class ApplicationConfig {
     liquibase.setDataSource(dataSource());
     return liquibase;
   }
+  /*
+   * 
+   * @Bean public EntityManagerFactory entityManagerFactory() { HibernateJpaVendorAdapter
+   * vendorAdapter = new HibernateJpaVendorAdapter(); vendorAdapter.setGenerateDdl(true);
+   * LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+   * factory.setJpaVendorAdapter(vendorAdapter); factory.setPackagesToScan("com.leverx.entity");
+   * factory.setDataSource(dataSource()); factory.afterPropertiesSet();
+   * 
+   * return factory.getObject(); }
+   * 
+   * @Bean public PlatformTransactionManager transactionManager() { JpaTransactionManager txManager
+   * = new JpaTransactionManager(); txManager.setEntityManagerFactory(entityManagerFactory());
+   * return txManager; }
+   */
+
 }

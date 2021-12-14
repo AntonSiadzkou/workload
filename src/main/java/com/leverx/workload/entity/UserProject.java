@@ -10,7 +10,8 @@ import javax.persistence.Table;
 @Table(name = "user_project")
 public class UserProject {
 
-  @EmbeddedId private UserProjectId id;
+  @EmbeddedId
+  private UserProjectId id;
 
   @Column(name = "assign_date")
   private LocalDateTime assignDate;
