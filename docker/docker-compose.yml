@@ -1,0 +1,9 @@
+version: "3.9"
+
+services:
+  web:
+    image: tomcat:9.0.55
+    volumes:
+      - ../target/workload.war:/usr/local/tomcat/webapps/workload.war
+    ports:
+      - '8080:8080'
