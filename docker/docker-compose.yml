@@ -3,7 +3,21 @@ version: "3.9"
 services:
   web:
     image: tomcat:9.0.55
+    depends_on:
+      - postgres
     volumes:
       - ../target/workload.war:/usr/local/tomcat/webapps/workload.war
     ports:
       - '8080:8080'
+
+  postgres:
+    image: postgres:14.1
+    restart: always
+    volumes:
+      - ../.database/postgres/data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "docker"
+      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: "workload"
+    ports:
+      - "5432:5432"
