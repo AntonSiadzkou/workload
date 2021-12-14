@@ -2,7 +2,7 @@ package com.leverx.workload.config;
 
 import java.util.Properties;
 import javax.sql.DataSource;
-import lombok.extern.slf4j.Slf4j;
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,7 +17,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebMvc
 @EnableTransactionManagement
-@Slf4j
 @ComponentScan(basePackages = "com.leverx")
 @PropertySource("classpath:app.properties")
 public class ApplicationConfig {
@@ -61,5 +60,13 @@ public class ApplicationConfig {
     HibernateTransactionManager transactionManager = new HibernateTransactionManager();
     transactionManager.setSessionFactory(sessionFactory().getObject());
     return transactionManager;
+  }
+
+  @Bean
+  public SpringLiquibase liquibase() {
+    SpringLiquibase liquibase = new SpringLiquibase();
+    liquibase.setChangeLog("classpath:db/changelog/db-changelog-master.xml");
+    liquibase.setDataSource(dataSource());
+    return liquibase;
   }
 }
