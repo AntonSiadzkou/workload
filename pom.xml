@@ -134,7 +134,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <configLocation>src/main/resources/checkstyle/google_checks.xml</configLocation>
+          <configLocation>config/google_checks.xml</configLocation>
           <encoding>UTF-8</encoding>
           <consoleOutput>true</consoleOutput>
           <failsOnError>true</failsOnError>
@@ -169,7 +169,7 @@
               <targetDirectory>${project.build.directory}</targetDirectory>
               <testSourceDirectory>${project.build.testSourceDirectory}</testSourceDirectory>
               <encoding>UTF-8</encoding>
-              <configFile>src/main/resources/formatter/google-formatter.xml</configFile>
+              <configFile>config/google-formatter.xml</configFile>
             </configuration>
           </execution>
         </executions>

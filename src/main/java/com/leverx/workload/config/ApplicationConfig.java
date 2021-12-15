@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -70,19 +69,4 @@ public class ApplicationConfig {
     liquibase.setDataSource(dataSource());
     return liquibase;
   }
-  /*
-   * 
-   * @Bean public EntityManagerFactory entityManagerFactory() { HibernateJpaVendorAdapter
-   * vendorAdapter = new HibernateJpaVendorAdapter(); vendorAdapter.setGenerateDdl(true);
-   * LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
-   * factory.setJpaVendorAdapter(vendorAdapter); factory.setPackagesToScan("com.leverx.entity");
-   * factory.setDataSource(dataSource()); factory.afterPropertiesSet();
-   * 
-   * return factory.getObject(); }
-   * 
-   * @Bean public PlatformTransactionManager transactionManager() { JpaTransactionManager txManager
-   * = new JpaTransactionManager(); txManager.setEntityManagerFactory(entityManagerFactory());
-   * return txManager; }
-   */
-
 }
