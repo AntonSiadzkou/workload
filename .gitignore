@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 out/
+.database
 
 ### Additional application resources
 add_res/
