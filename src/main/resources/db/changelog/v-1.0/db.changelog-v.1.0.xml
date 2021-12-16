@@ -2,12 +2,17 @@
 <databaseChangeLog
   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+  http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
-  <include file="01-changeset-departments-table.xml" relativeToChangelogFile="true"/>
-  <include file="11-changeset-users-table.xml" relativeToChangelogFile="true"/>
-  <include file="22-changeset-projects-table.xml" relativeToChangelogFile="true"/>
-  <include file="33-changeset-user-project-table.xml" relativeToChangelogFile="true"/>
+  <changeSet author="AntonSiadzkou" id="1">
+    <createTable tableName="departments">
+      <column autoIncrement="true" name="id" type="BIGINT">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="department_pkey"/>
+      </column>
+      <column name="title" type="VARCHAR(255)"/>
+    </createTable>
+  </changeSet>
 
 </databaseChangeLog>
