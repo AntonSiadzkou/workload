@@ -1,14 +1,18 @@
 package com.leverx.workload.service.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.leverx.workload.controller.request.UserRequest;
 import com.leverx.workload.controller.response.UserResponse;
 import com.leverx.workload.entity.UserEntity;
+import com.leverx.workload.exception.UserWithSuchEmailExists;
 import com.leverx.workload.mapper.UserMapper;
+import com.leverx.workload.model.User;
 import com.leverx.workload.repository.UserRepository;
 import com.leverx.workload.service.UserService;
 import java.util.ArrayList;
@@ -107,5 +111,45 @@ class UserServiceImplTest {
 
     verify(repository).findById(id);
     assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void createUser() {
+    UserResponse expected = new UserResponse();
+    long id = 3;
+    expected.setId(id);
+    UserRequest request = new UserRequest();
+    User model = new User();
+    UserEntity entity = new UserEntity();
+
+    given(repository.findByEmail(any())).willReturn(Optional.empty());
+    given(mapper.toModelFromRequest(request)).willReturn(model);
+    given(mapper.toEntity(model)).willReturn(entity);
+    given(repository.save(entity)).willReturn(entity);
+    given(mapper.toResponse(any())).willReturn(expected);
+
+    UserResponse actual = underTest.createUser(request);
+
+    verify(repository).findByEmail(any());
+    verify(repository).save(entity);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void createUserException() {
+    String email = "test@mail.com";
+    Exception exception = assertThrows(UserWithSuchEmailExists.class, () -> {
+      UserRequest request = new UserRequest();
+      request.setEmail(email);
+
+      given(repository.findByEmail(email)).willReturn(Optional.of(new UserEntity()));
+
+      underTest.createUser(request);
+    });
+
+    String expectedMessage = "Email = " + email + " already exists, email must be unique";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
   }
 }

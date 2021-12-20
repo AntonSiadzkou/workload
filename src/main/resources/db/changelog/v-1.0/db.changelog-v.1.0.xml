@@ -5,9 +5,9 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.4.xsd">
 
-  <changeSet author="AntonSiadzkou" id="1">
+  <changeSet id="1" author="AntonSiadzkou">
     <createTable tableName="users">
-      <column name="id" autoIncrement="true" type="BIGINT">
+      <column name="id" autoIncrement="true" type="BIGINT" startWith="11">
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
       </column>
       <column name="first_name" type="VARCHAR(255)">
@@ -35,6 +35,15 @@
         <constraints nullable="false"/>
       </column>
     </createTable>
+  </changeSet>
+
+  <changeSet  id="2" author="AntonSiadzkou">
+    <createSequence
+      dataType="BIGINT"
+      incrementBy="2"
+      schemaName="public"
+      sequenceName="hibernate_sequence"
+      startValue="25"/>
   </changeSet>
 
 </databaseChangeLog>

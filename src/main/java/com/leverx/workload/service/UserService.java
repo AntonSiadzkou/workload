@@ -1,5 +1,6 @@
 package com.leverx.workload.service;
 
+import com.leverx.workload.controller.request.UserRequest;
 import com.leverx.workload.controller.response.UserResponse;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
@@ -13,4 +14,6 @@ public interface UserService {
   List<UserResponse> findByFirstNameIgnoreCaseContaining(String firstName, Pageable pageable);
 
   UserResponse findById(long id);
+
+  UserResponse createUser(UserRequest user);
 }

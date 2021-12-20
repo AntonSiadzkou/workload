@@ -1,15 +1,18 @@
 package com.leverx.workload.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.LiquibaseConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.controller.request.UserRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -75,4 +78,33 @@ class UserControllerTest {
         .andExpect(jsonPath("$.message").value("User with id=9999 not found"));
   }
 
+  @Test
+  void createUser() throws Exception {
+    mvc.perform(post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(new UserRequest("Jane", "Kane", "email11@mail.com", "pass24AS",
+            "lead", "IT", "user", true))))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.firstName").value("Jane"))
+        .andExpect(jsonPath("$.email").value("email11@mail.com"));
+  }
+
+  @Test
+  void createUserEmailException() throws Exception {
+    mvc.perform(post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(new UserRequest("Lowry", "Wayne", "mail4@joy.com", "pass34Wq",
+            "junior", "IT", "user", false))))
+        .andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("400")).andExpect(jsonPath("$.message")
+            .value("Email = mail4@joy.com already exists, email must be unique"));
+  }
+
+  private static String asJsonString(final Object obj) {
+    try {
+      return new ObjectMapper().writeValueAsString(obj);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

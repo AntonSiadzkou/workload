@@ -20,19 +20,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@ContextConfiguration(
-    classes = {
-      ApplicationConfig.class,
-      MapperConfig.class,
-      LiquibaseConfig.class,
-      WebConfig.class,
-      H2TestConfig.class
-    })
+@ContextConfiguration(classes = {ApplicationConfig.class, MapperConfig.class, LiquibaseConfig.class,
+    WebConfig.class, H2TestConfig.class})
 @WebAppConfiguration
 @Sql("classpath:test-data.sql")
 class UserRepositoryTest {
 
-  @Autowired private UserRepository underTest;
+  @Autowired
+  private UserRepository underTest;
 
   @Test
   void findByEmail() {

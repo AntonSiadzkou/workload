@@ -17,6 +17,7 @@
     <hibernate.version>5.6.1.Final</hibernate.version>
     <postgresql.version>42.3.1</postgresql.version>
     <liquibase.version>4.6.2</liquibase.version>
+    <hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
     <modelmapper.version>2.4.4</modelmapper.version>
     <springfox.swagger.version>3.0.0</springfox.swagger.version>
     <jackson.version>2.13.0</jackson.version>
@@ -166,6 +167,12 @@
       <artifactId>h2</artifactId>
       <version>${h2.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>${hibernate.validator.version}</version>
     </dependency>
 
     <dependency>
