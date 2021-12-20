@@ -17,8 +17,17 @@
     <hibernate.version>5.6.1.Final</hibernate.version>
     <postgresql.version>42.3.1</postgresql.version>
     <liquibase.version>4.6.2</liquibase.version>
+    <modelmapper.version>2.4.4</modelmapper.version>
+    <springfox.swagger.version>3.0.0</springfox.swagger.version>
+    <jackson.version>2.13.0</jackson.version>
     <servlet.version>4.0.1</servlet.version>
     <lombok.version>1.18.22</lombok.version>
+    <junit.version>5.7.2</junit.version>
+    <mockito.version>3.9.0</mockito.version>
+    <mockito.junit.version>2.17.0</mockito.junit.version>
+    <assertj.version>3.19.0</assertj.version>
+    <hamcrest.version>2.2</hamcrest.version>
+    <h2.version>1.4.200</h2.version>
     <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
     <checkstyle.puppycrawl.version>9.0.1</checkstyle.puppycrawl.version>
     <formatter.plugin.version>2.17.1</formatter.plugin.version>
@@ -70,14 +79,31 @@
     </dependency>
 
     <dependency>
+      <groupId>org.modelmapper</groupId>
+      <artifactId>modelmapper</artifactId>
+      <version>${modelmapper.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${springfox.swagger.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>${springfox.swagger.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-core</artifactId>
-      <version>2.13.0</version>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.13.0</version>
+      <version>${jackson.version}</version>
     </dependency>
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -91,6 +117,55 @@
       <artifactId>lombok</artifactId>
       <version>${lombok.version}</version>
       <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.core.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${mockito.junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hamcrest</groupId>
+      <artifactId>hamcrest-library</artifactId>
+      <version>${hamcrest.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.jayway.jsonpath</groupId>
+      <artifactId>json-path</artifactId>
+      <version>2.6.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
     </dependency>
 
     <dependency>

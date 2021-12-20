@@ -1,24 +1,25 @@
 package com.leverx.workload.entity;
 
-import javax.persistence.Entity;
+import java.io.Serializable;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.MappedSuperclass;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Entity
-@Table(name = "departments")
-@Getter
+@MappedSuperclass
 @Setter
+@Getter
+@EqualsAndHashCode
 @NoArgsConstructor
-public class Department {
+@AllArgsConstructor
+public class AbstractEntity implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE)
   private long id;
-
-  private String title;
 }
