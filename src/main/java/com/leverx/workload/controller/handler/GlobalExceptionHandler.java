@@ -16,31 +16,22 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   public ExceptionMessage unexpectedException(HttpServletRequest request, Exception e) {
-    return new ExceptionMessage(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        LocalDateTime.now(),
-        e.getMessage(),
-        request.getRequestURL().toString());
+    return new ExceptionMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(),
+        e.getMessage(), request.getRequestURL().toString());
   }
 
   @ExceptionHandler(UserNotExistException.class)
   @ResponseStatus(HttpStatus.NOT_FOUND)
   public ExceptionMessage userNotExistException(HttpServletRequest request, Exception e) {
-    return new ExceptionMessage(
-        HttpStatus.NOT_FOUND.value(),
-        LocalDateTime.now(),
-        e.getMessage(),
+    return new ExceptionMessage(HttpStatus.NOT_FOUND.value(), LocalDateTime.now(), e.getMessage(),
         request.getRequestURL().toString());
   }
 
   @ExceptionHandler({UserWithSuchEmailExists.class, NotValidUser.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ExceptionMessage UserWithSuchEmailExistsException(
-      HttpServletRequest request, Exception e) {
-    return new ExceptionMessage(
-        HttpStatus.BAD_REQUEST.value(),
-        LocalDateTime.now(),
-        e.getMessage(),
+  public ExceptionMessage UserWithSuchEmailExistsException(HttpServletRequest request,
+      Exception e) {
+    return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), LocalDateTime.now(), e.getMessage(),
         request.getRequestURL().toString());
   }
 }

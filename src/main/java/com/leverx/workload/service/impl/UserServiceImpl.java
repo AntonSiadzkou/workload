@@ -58,4 +58,23 @@ public class UserServiceImpl implements UserService {
     return mapper.toResponse(mapper
         .toModelFromEntity(repository.save(mapper.toEntity(mapper.toModelFromRequest(user)))));
   }
+
+  @Override
+  @Transactional
+  public UserResponse updateUser(UserRequest user) {
+    long id = user.getId();
+    if (repository.findById(id).isEmpty()) {
+      throw new UserNotExistException("Unable to update user. User doesn't exist.");
+    }
+    String email = user.getEmail();
+    if (repository.findByEmail(email).isPresent()) {
+      long anotherId = repository.findByEmail(email).get().getId();
+      if (id != anotherId) {
+        throw new UserWithSuchEmailExists(
+            String.format("Email = %s already exists, email must be unique", user.getEmail()));
+      }
+    }
+    return mapper.toResponse(mapper
+        .toModelFromEntity(repository.save(mapper.toEntity(mapper.toModelFromRequest(user)))));
+  }
 }

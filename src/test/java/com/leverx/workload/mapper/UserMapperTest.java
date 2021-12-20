@@ -21,7 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class UserMapperTest {
 
   private UserMapper underTest;
-  @Autowired private ModelMapper mapper;
+  @Autowired
+  private ModelMapper mapper;
 
   @BeforeEach
   void setUp() {
@@ -102,9 +103,8 @@ class UserMapperTest {
 
   @Test
   void toModelFromRequestAssertTrue() {
-    UserRequest request =
-        new UserRequest(
-            "John", "Admin", "email@mail.com", "password", "junior", "PR", "user", true);
+    UserRequest request = new UserRequest("John", "Admin", "email@mail.com", "password", "junior",
+        "PR", "user", true);
     User expected =
         new User("John", "Admin", "email@mail.com", "password", "junior", "PR", "user", true);
 
@@ -115,9 +115,8 @@ class UserMapperTest {
 
   @Test
   void toModelFromRequestAssertFalse() {
-    UserRequest request =
-        new UserRequest(
-            "John", "Admin", "email@mail.com", "password", "junior", "PR", "user", true);
+    UserRequest request = new UserRequest("John", "Admin", "email@mail.com", "password", "junior",
+        "PR", "user", true);
     User expected =
         new User("John", "Admin", "email@mail.com", "password", "middle", "HR", "admin", true);
 

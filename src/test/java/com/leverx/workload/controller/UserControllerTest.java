@@ -2,6 +2,7 @@ package com.leverx.workload.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -98,6 +99,27 @@ class UserControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("400")).andExpect(jsonPath("$.message")
             .value("Email = mail4@joy.com already exists, email must be unique"));
+  }
+
+  @Test
+  void updateUser() throws Exception {
+    mvc.perform(put(USER_ENDPOINT + "/{id}", 4).contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(new UserRequest("NewUser", "Kane", "newmail@mail.com", "pass24AS",
+            "lead", "IT", "user", true))))
+        .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.firstName").value("NewUser"))
+        .andExpect(jsonPath("$.email").value("newmail@mail.com"));
+  }
+
+  @Test
+  void updateUserException() throws Exception {
+    mvc.perform(put(USER_ENDPOINT + "/{id}", 100).contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(new UserRequest("NewUser", "Kane", "newmail@mail.com", "pass24AS",
+            "lead", "IT", "user", true))))
+        .andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("Unable to update user. User doesn't exist."));
   }
 
   private static String asJsonString(final Object obj) {

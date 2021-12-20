@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import com.leverx.workload.controller.request.UserRequest;
 import com.leverx.workload.controller.response.UserResponse;
 import com.leverx.workload.entity.UserEntity;
+import com.leverx.workload.exception.UserNotExistException;
 import com.leverx.workload.exception.UserWithSuchEmailExists;
 import com.leverx.workload.mapper.UserMapper;
 import com.leverx.workload.model.User;
@@ -145,6 +146,74 @@ class UserServiceImplTest {
       given(repository.findByEmail(email)).willReturn(Optional.of(new UserEntity()));
 
       underTest.createUser(request);
+    });
+
+    String expectedMessage = "Email = " + email + " already exists, email must be unique";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
+  @Test
+  void updateUser() {
+    UserResponse expected = new UserResponse();
+    long id = 3;
+    expected.setId(id);
+    UserRequest request = new UserRequest();
+    request.setId(id);
+    User model = new User();
+    UserEntity entity = new UserEntity();
+
+    given(repository.findById(id)).willReturn(Optional.of(entity));
+    given(repository.findByEmail(any())).willReturn(Optional.empty());
+    given(mapper.toModelFromRequest(request)).willReturn(model);
+    given(mapper.toEntity(model)).willReturn(entity);
+    given(repository.save(entity)).willReturn(entity);
+    given(mapper.toResponse(any())).willReturn(expected);
+
+    UserResponse actual = underTest.updateUser(request);
+
+    verify(repository).findById(id);
+    verify(repository).findByEmail(any());
+    verify(repository).save(entity);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void updateUserExceptionUserNotExist() {
+    Exception exception = assertThrows(UserNotExistException.class, () -> {
+      UserRequest request = new UserRequest();
+      request.setId(999);
+
+      underTest.updateUser(request);
+    });
+
+    String expectedMessage = "Unable to update user. User doesn't exist.";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
+  @Test
+  void updateUserExceptionSuchEmailExists() {
+    String email = "test@mail.com";
+    Exception exception = assertThrows(UserWithSuchEmailExists.class, () -> {
+      long id = 2;
+      long id2 = 4;
+      UserEntity entity = new UserEntity();
+      entity.setId(id);
+      entity.setEmail(email);
+      UserEntity entity2 = new UserEntity();
+      entity2.setId(id2);
+      entity2.setEmail(email);
+      UserRequest request = new UserRequest();
+      request.setId(id);
+      request.setEmail(email);
+
+      given(repository.findById(id)).willReturn(Optional.of(entity));
+      given(repository.findByEmail(email)).willReturn(Optional.of(entity2));
+
+      underTest.updateUser(request);
     });
 
     String expectedMessage = "Email = " + email + " already exists, email must be unique";

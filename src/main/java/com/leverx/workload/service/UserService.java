@@ -16,4 +16,6 @@ public interface UserService {
   UserResponse findById(long id);
 
   UserResponse createUser(UserRequest user);
+
+  UserResponse updateUser(UserRequest user);
 }

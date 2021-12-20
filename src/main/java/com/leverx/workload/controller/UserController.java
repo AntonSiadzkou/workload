@@ -24,6 +24,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -107,6 +108,24 @@ public class UserController {
           "User fields have errors. " + BindingResultErrorsParser.parseErrors(result));
     }
     return service.createUser(user);
+  }
+
+  @PutMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Update a user in the database")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public UserResponse updateUser(
+      @ApiParam(name = "id", value = "Identifier of user") @PathVariable long id,
+      @ApiParam(name = "user", value = "User with updated information") @RequestBody
+      @Valid UserRequest user, BindingResult result) {
+    if (result.hasErrors()) {
+      throw new NotValidUser(
+          "User fields have errors. " + BindingResultErrorsParser.parseErrors(result));
+    }
+    user.setId(id);
+    return service.updateUser(user);
   }
 
   private Sort.Direction getSortDirection(String direction) {
