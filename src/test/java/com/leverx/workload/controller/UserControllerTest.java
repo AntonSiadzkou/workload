@@ -25,14 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@ContextConfiguration(
-    classes = {
-      ApplicationConfig.class,
-      MapperConfig.class,
-      LiquibaseConfig.class,
-      WebConfig.class,
-      H2TestConfig.class
-    })
+@ContextConfiguration(classes = {ApplicationConfig.class, MapperConfig.class, LiquibaseConfig.class,
+    WebConfig.class, H2TestConfig.class})
 @WebAppConfiguration
 @Sql("classpath:test-data.sql")
 class UserControllerTest {
@@ -52,8 +46,7 @@ class UserControllerTest {
 
   @Test
   void getAllUsersFilterByName() throws Exception {
-    mvc.perform(get(USER_ENDPOINT + "?firstName=John"))
-        .andExpect(status().isOk())
+    mvc.perform(get(USER_ENDPOINT + "?firstName=John")).andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$[0].firstName").value("John"))
         .andExpect(jsonPath("$[2].firstName").value("john"))
@@ -62,8 +55,24 @@ class UserControllerTest {
 
   @Test
   public void shouldReturnOkIfGetRequest() throws Exception {
-    mvc.perform(get(USER_ENDPOINT))
-        .andExpect(status().isOk())
+    mvc.perform(get(USER_ENDPOINT)).andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
   }
+
+  @Test
+  void getUserById() throws Exception {
+    mvc.perform(get(USER_ENDPOINT + "/{id}", 4)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.firstName").value("Artur"))
+        .andExpect(jsonPath("$.email").value("mail4@joy.com"));
+  }
+
+  @Test
+  void getUserByIdException() throws Exception {
+    mvc.perform(get(USER_ENDPOINT + "/{id}", 9999)).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("User with id=9999 not found"));
+  }
+
 }

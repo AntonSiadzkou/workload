@@ -13,6 +13,7 @@ import com.leverx.workload.repository.UserRepository;
 import com.leverx.workload.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,9 +27,12 @@ import org.springframework.data.domain.Pageable;
 class UserServiceImplTest {
 
   private UserService underTest;
-  @Mock private UserRepository repository;
-  @Mock private UserMapper mapper;
-  @Mock private Pageable pageable;
+  @Mock
+  private UserRepository repository;
+  @Mock
+  private UserMapper mapper;
+  @Mock
+  private Pageable pageable;
 
   @BeforeEach
   void setUp() {
@@ -39,11 +43,12 @@ class UserServiceImplTest {
   }
 
   @Test
-  void checkFindByEmail() {
+  void FindByEmail() {
     UserResponse expected = new UserResponse();
     String email = "email@mail.com";
     expected.setEmail(email);
     given(mapper.toResponse(any())).willReturn(expected);
+    given(repository.findByEmail(email)).willReturn(Optional.of(new UserEntity()));
 
     UserResponse actual = underTest.findByEmail(expected.getEmail());
 
@@ -87,6 +92,20 @@ class UserServiceImplTest {
 
     List<UserResponse> actual = underTest.findByFirstNameIgnoreCaseContaining(name, pageable);
 
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void findById() {
+    UserResponse expected = new UserResponse();
+    long id = 3;
+    expected.setId(id);
+    given(mapper.toResponse(any())).willReturn(expected);
+    given(repository.findById(id)).willReturn(Optional.of(new UserEntity()));
+
+    UserResponse actual = underTest.findById(id);
+
+    verify(repository).findById(id);
     assertThat(actual).isEqualTo(expected);
   }
 }

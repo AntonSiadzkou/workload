@@ -41,7 +41,7 @@ class UserRepositoryTest {
         new UserEntity("John", "Archibald", email, "pass", "senior", "IT", "admin", true);
     expected.setId(3);
 
-    UserEntity actual = underTest.findByEmail(email);
+    UserEntity actual = underTest.findByEmail(email).get();
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -55,5 +55,17 @@ class UserRepositoryTest {
         underTest.findByFirstNameIgnoreCaseContaining(name, PageRequest.of(0, 5));
 
     assertThat(actual.getTotalElements()).isEqualTo(expected);
+  }
+
+  @Test
+  void findById() {
+    long id = 2;
+    UserEntity expected =
+        new UserEntity("Zoey", "Aco", "mail2@joy.com", "pass", "lead", "IT", "user", true);
+    expected.setId(id);
+
+    UserEntity actual = underTest.findById(id).get();
+
+    assertThat(actual).isEqualTo(expected);
   }
 }

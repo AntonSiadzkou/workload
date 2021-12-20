@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -33,34 +34,22 @@ public class UserController {
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation(
-      value =
-          "Get list of all users with pagination and sorting and filtering by first name and email")
-  @ApiResponses(
-      value = {
-        @ApiResponse(code = 200, message = "Success"),
-        @ApiResponse(code = 500, message = "Internal server error")
-      })
+      value = "Get list of all users with pagination and sorting and filtering by first name and email")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 500, message = "Internal server error")})
   public List<UserResponse> getAllUsers(
-      @ApiParam(
-              name = "firstName",
-              value = "First name of users by which the selection is filtered")
-          @RequestParam(name = "firstName", required = false)
-          String firstName,
+      @ApiParam(name = "firstName",
+          value = "First name of users by which the selection is filtered")
+      @RequestParam(name = "firstName", required = false) String firstName,
       @ApiParam(name = "email", value = "Email of user by which the selection is filtered")
-          @RequestParam(required = false)
-          String email,
+      @RequestParam(required = false) String email,
       @ApiParam(name = "page", defaultValue = "0", value = "Number of page, start from 0")
-          @RequestParam(defaultValue = "${page.num.default}")
-          int page,
+      @RequestParam(defaultValue = "${page.num.default}") int page,
       @ApiParam(name = "size", defaultValue = "3", value = "Maximum number of items per page")
-          @RequestParam(defaultValue = "${page.size.default}")
-          int size,
-      @ApiParam(
-              name = "sort",
-              defaultValue = "id,asc",
-              value = "Array of pairs (column and direction) to sort the selection")
-          @RequestParam(defaultValue = "${page.sort.default}")
-          String[] sort) {
+      @RequestParam(defaultValue = "${page.size.default}") int size,
+      @ApiParam(name = "sort", defaultValue = "id,asc",
+          value = "Array of pairs (column and direction) to sort the selection")
+      @RequestParam(defaultValue = "${page.sort.default}") String[] sort) {
     List<UserResponse> users = new ArrayList<>();
 
     if (email != null) {
@@ -84,6 +73,17 @@ public class UserController {
       }
     }
     return users;
+  }
+
+  @GetMapping("/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get a user by an identifier")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 404, message = "Not Found"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public UserResponse getUserById(
+      @ApiParam(name = "id", value = "Identifier of user") @PathVariable long id) {
+    return service.findById(id);
   }
 
   private Sort.Direction getSortDirection(String direction) {

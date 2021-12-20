@@ -11,4 +11,6 @@ public interface UserService {
   List<UserResponse> findAllUsers(Pageable pageable);
 
   List<UserResponse> findByFirstNameIgnoreCaseContaining(String firstName, Pageable pageable);
+
+  UserResponse findById(long id);
 }
