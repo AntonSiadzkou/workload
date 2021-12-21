@@ -3,10 +3,14 @@ package com.leverx.workload.config;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import org.springframework.beans.factory.annotation.Value;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -16,29 +20,19 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.leverx.workload.repository")
+@EnableJpaRepositories(basePackages = "com.leverx.workload")
 @EnableTransactionManagement
-@ComponentScan(basePackages = "com.leverx")
+@PropertySource("classpath:test.properties")
+@AllArgsConstructor
 public class H2TestConfig {
-
-  @Value("org.h2.Driver")
-  private String driverClass;
-
-  @Value("jdbc:h2:mem:db;DB_CLOSE_DELAY=-1")
-  private String jdbcUrl;
-
-  @Value("sa")
-  private String jdbcUsername;
-
-  @Value("sa")
-  private String jdbcPassword;
+  private final Environment env;
 
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
     em.setDataSource(dataSource());
-    em.setPackagesToScan("com.leverx.workload.entity");
+    em.setPackagesToScan(env.getRequiredProperty("scan.package"));
     em.setJpaVendorAdapter(vendorAdapter);
     em.setJpaProperties(additionalJpaProperties());
     return em;
@@ -46,18 +40,18 @@ public class H2TestConfig {
 
   Properties additionalJpaProperties() {
     Properties properties = new Properties();
-    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
-    properties.setProperty("hibernate.show_sql", "true");
+    properties.setProperty("hibernate.dialect", env.getRequiredProperty("jpa.hibernate.dialect"));
+    properties.setProperty("hibernate.show_sql", env.getRequiredProperty("jpa.hibernate.show_sql"));
     return properties;
   }
 
   @Bean
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName(driverClass);
-    dataSource.setUrl(jdbcUrl);
-    dataSource.setUsername(jdbcUsername);
-    dataSource.setPassword(jdbcPassword);
+    dataSource.setDriverClassName(env.getRequiredProperty("jdbc.driverClass"));
+    dataSource.setUrl(env.getRequiredProperty("jdbc.url"));
+    dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
+    dataSource.setPassword(env.getRequiredProperty("jdbc.password"));
     return dataSource;
   }
 
@@ -66,5 +60,11 @@ public class H2TestConfig {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;
+  }
+
+  @Bean
+  public Validator validator() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    return factory.getValidator();
   }
 }

@@ -3,6 +3,9 @@ package com.leverx.workload.config;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,10 +19,13 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
-@EnableJpaRepositories(basePackages = "com.leverx.workload.repository")
+@EnableJpaRepositories(basePackages = "com.leverx.workload")
 @EnableTransactionManagement
 @PropertySource("classpath:app.properties")
 public class JpaConfig {
+  @Value("${scan.package}")
+  private String scanPackage;
+
   @Value("${jdbc.driverClass}")
   private String driverClass;
 
@@ -32,12 +38,18 @@ public class JpaConfig {
   @Value("${jdbc.password}")
   private String jdbcPassword;
 
+  @Value("${jpa.hibernate.dialect}")
+  private String hibernateDialect;
+
+  @Value("${jpa.hibernate.show_sql}")
+  private String hibernateShowSql;
+
   @Bean
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
     em.setDataSource(dataSource());
-    em.setPackagesToScan("com.leverx.workload.entity");
+    em.setPackagesToScan(scanPackage);
     em.setJpaVendorAdapter(vendorAdapter);
     em.setJpaProperties(additionalJpaProperties());
     return em;
@@ -45,8 +57,8 @@ public class JpaConfig {
 
   Properties additionalJpaProperties() {
     Properties properties = new Properties();
-    properties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL10Dialect");
-    properties.setProperty("hibernate.show_sql", "true");
+    properties.setProperty("hibernate.dialect", hibernateDialect);
+    properties.setProperty("hibernate.show_sql", hibernateShowSql);
     return properties;
   }
 
@@ -65,5 +77,11 @@ public class JpaConfig {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;
+  }
+
+  @Bean
+  public Validator validator() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    return factory.getValidator();
   }
 }

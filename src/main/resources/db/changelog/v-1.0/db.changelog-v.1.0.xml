@@ -7,7 +7,7 @@
 
   <changeSet id="1" author="AntonSiadzkou">
     <createTable tableName="users">
-      <column name="id" autoIncrement="true" type="BIGINT" startWith="11">
+      <column name="id" autoIncrement="true" type="BIGINT">
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
       </column>
       <column name="first_name" type="VARCHAR(255)">
@@ -37,13 +37,14 @@
     </createTable>
   </changeSet>
 
-  <changeSet  id="2" author="AntonSiadzkou">
+  <changeSet id="2" author="AntonSiadzkou">
     <createSequence
-      dataType="BIGINT"
-      incrementBy="2"
       schemaName="public"
-      sequenceName="hibernate_sequence"
-      startValue="25"/>
+      sequenceName="users_id_seq"
+      dataType="BIGINT"
+      startValue="15"
+      incrementBy="2"
+    />
   </changeSet>
 
 </databaseChangeLog>

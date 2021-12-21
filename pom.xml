@@ -18,6 +18,7 @@
     <postgresql.version>42.3.1</postgresql.version>
     <liquibase.version>4.6.2</liquibase.version>
     <hibernate.validator.version>6.2.0.Final</hibernate.validator.version>
+    <javax.el.validator.version>3.0.0</javax.el.validator.version>
     <modelmapper.version>2.4.4</modelmapper.version>
     <springfox.swagger.version>3.0.0</springfox.swagger.version>
     <jackson.version>2.13.0</jackson.version>
@@ -77,6 +78,17 @@
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
       <version>${liquibase.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate.validator</groupId>
+      <artifactId>hibernate-validator</artifactId>
+      <version>${hibernate.validator.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.el</artifactId>
+      <version>${javax.el.validator.version}</version>
     </dependency>
 
     <dependency>
@@ -167,12 +179,6 @@
       <artifactId>h2</artifactId>
       <version>${h2.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hibernate.validator</groupId>
-      <artifactId>hibernate-validator</artifactId>
-      <version>${hibernate.validator.version}</version>
     </dependency>
 
     <dependency>
