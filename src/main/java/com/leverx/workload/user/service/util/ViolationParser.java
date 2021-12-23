@@ -5,6 +5,7 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 
 public class ViolationParser {
+
   private ViolationParser() {
     throw new UnsupportedOperationException("Forbidden to create an instance.");
   }

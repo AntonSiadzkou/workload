@@ -85,8 +85,7 @@ class UserControllerTest {
     mvc.perform(post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
         .content(asJsonString(createUserBodyParamsSample()))).andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.firstName").value("Jane"))
-        .andExpect(jsonPath("$.email").value("email11@mail.com"));
+        .andExpect(jsonPath("$").value("12"));
   }
 
   @Test
@@ -105,10 +104,7 @@ class UserControllerTest {
   void updateUser_UserValid_Updated() throws Exception {
     UserBodyParams user = createUserBodyParamsSample();
     mvc.perform(put(USER_ENDPOINT + "/{id}", 4).contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(user))).andExpect(status().isOk())
-        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
-        .andExpect(jsonPath("$.email").value(user.getEmail()));
+        .content(asJsonString(user))).andExpect(status().isOk());
   }
 
   @Test
@@ -137,7 +133,6 @@ class UserControllerTest {
 
   private UserBodyParams createUserBodyParamsSample() {
     UserBodyParams user = new UserBodyParams();
-    user.setId(11);
     user.setFirstName("Jane");
     user.setLastName("Kane");
     user.setEmail("email11@mail.com");

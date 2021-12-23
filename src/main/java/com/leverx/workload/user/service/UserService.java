@@ -1,17 +1,18 @@
 package com.leverx.workload.user.service;
 
 import com.leverx.workload.user.model.User;
+import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import java.util.List;
 
 public interface UserService {
 
-  List<User> findAllUsers(String firstName, String email, int page, int size, String[] sort);
+  List<User> findAllUsers(UserRequestParams params);
 
   User findById(long id);
 
-  User createUser(User user);
+  long createUser(User user);
 
-  User updateUser(User user);
+  void updateUser(User user);
 
   void deleteUserById(long id);
 }

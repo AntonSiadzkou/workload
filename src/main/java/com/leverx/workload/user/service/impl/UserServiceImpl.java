@@ -9,6 +9,7 @@ import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.service.converter.EntityModelConverter;
 import com.leverx.workload.user.service.util.ViolationParser;
+import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -31,33 +32,19 @@ public class UserServiceImpl implements UserService {
   private final Validator validator;
 
   @Override
-  public List<User> findAllUsers(String firstName, String email, int page, int size, String[] sort) {
-    List<User> users = new ArrayList<>();
-
-    if (email != null) {
-      User user = findByEmail(email);
-      users.add(user);
-    } else {
-      List<Order> orders = new ArrayList<>();
-      if (sort[0].contains(",")) {
-        for (String sortOrder : sort) {
-          String[] sorts = sortOrder.split(",");
-          orders.add(new Order(getSortDirection(sorts[1]), sorts[0]));
-        }
-      } else {
-        orders.add(new Order(getSortDirection(sort[1]), sort[0]));
-      }
-      Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
-      if (firstName == null) {
-        users = findUsers(pageable);
-      } else {
-        users = findByFirstNameIgnoreCaseContaining(firstName, pageable);
-      }
-    }
+  @Transactional(readOnly = true)
+  public List<User> findAllUsers(UserRequestParams params) {
+    Pageable pageable = getPageable(params.page(), params.size(), params.sort());
+    List<User> users = (params.email() != null)
+        ? findByEmail(params.email())
+        : (params.firstName() == null)
+            ? findUsers(pageable)
+            : findByFirstNameIgnoreCaseContaining(params.firstName(), pageable);
     return users;
   }
 
   @Override
+  @Transactional(readOnly = true)
   public User findById(long id) {
     return mapper.toModelFromEntity(repository.findById(id).orElseThrow(
         () -> new UserNotExistException(String.format("User with id=%s not found", id))));
@@ -65,19 +52,19 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public User createUser(User user) {
+  public long createUser(User user) {
     if (repository.findByEmail(user.getEmail()).isPresent()) {
       throw new DuplicatedEmailException(
           String.format("Email = %s already exists, email must be unique", user.getEmail()));
     }
     UserEntity entity = mapper.toEntity(user);
     checkEntityViolations(entity);
-    return mapper.toModelFromEntity(repository.save(entity));
+    return repository.save(entity).getId();
   }
 
   @Override
   @Transactional
-  public User updateUser(User user) {
+  public void updateUser(User user) {
     long id = user.getId();
     if (repository.findById(id).isEmpty()) {
       throw new UserNotExistException("Unable to update user. User doesn't exist.");
@@ -92,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
     UserEntity entity = mapper.toEntity(user);
     checkEntityViolations(entity);
-    return mapper.toModelFromEntity(repository.save(entity));
+    repository.save(entity);
   }
 
   @Override
@@ -104,9 +91,12 @@ public class UserServiceImpl implements UserService {
     repository.deleteById(id);
   }
 
-  private User findByEmail(String email) {
-    return mapper.toModelFromEntity(repository.findByEmail(email).orElseThrow(
+  private List<User> findByEmail(String email) {
+    List<User> users = new ArrayList<>();
+    User user = mapper.toModelFromEntity(repository.findByEmail(email).orElseThrow(
         () -> new UserNotExistException(String.format("User with email = %s not found", email))));
+    users.add(user);
+    return users;
   }
 
   private List<User> findUsers(Pageable pageable) {
@@ -117,6 +107,19 @@ public class UserServiceImpl implements UserService {
   private List<User> findByFirstNameIgnoreCaseContaining(String firstName, Pageable pageable) {
     Page<UserEntity> entities = repository.findByFirstNameIgnoreCaseContaining(firstName, pageable);
     return entities.getContent().stream().map(mapper::toModelFromEntity).toList();
+  }
+
+  private Pageable getPageable(int page, int size, String[] sort) {
+    List<Order> orders = new ArrayList<>();
+    if (sort[0].contains(",")) {
+      for (String sortOrder : sort) {
+        String[] sorts = sortOrder.split(",");
+        orders.add(new Order(getSortDirection(sorts[1]), sorts[0]));
+      }
+    } else {
+      orders.add(new Order(getSortDirection(sort[1]), sort[0]));
+    }
+    return PageRequest.of(page, size, Sort.by(orders));
   }
 
   private Sort.Direction getSortDirection(String direction) {

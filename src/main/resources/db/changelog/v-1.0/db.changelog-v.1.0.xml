@@ -7,7 +7,7 @@
 
   <changeSet id="1" author="AntonSiadzkou">
     <createTable tableName="users">
-      <column name="id" autoIncrement="true" type="BIGINT">
+      <column name="id" autoIncrement="true" type="BIGINT" startWith="15">
         <constraints nullable="false" primaryKey="true" primaryKeyName="user_pkey"/>
       </column>
       <column name="first_name" type="VARCHAR(255)">
@@ -38,12 +38,12 @@
   </changeSet>
 
   <changeSet id="2" author="AntonSiadzkou">
-    <createSequence
+    <alterSequence
       schemaName="public"
       sequenceName="users_id_seq"
       dataType="BIGINT"
       startValue="15"
-      incrementBy="2"
+      incrementBy="4"
     />
   </changeSet>
 

@@ -32,10 +32,10 @@ import lombok.ToString;
 public class UserEntity implements Serializable {
 
   @Serial
-  private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1919086764211023149L;
 
   @Id
-  @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq")
+  @SequenceGenerator(name = "users_id_seq", sequenceName = "users_id_seq", allocationSize = 4)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "users_id_seq")
   private long id;
 

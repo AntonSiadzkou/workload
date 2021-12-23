@@ -14,6 +14,7 @@ import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.service.converter.EntityModelConverter;
+import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,7 +62,8 @@ class UserServiceImplTest {
     given(repository.findByEmail(email)).willReturn(Optional.of(entity));
     given(mapper.toModelFromEntity(entity)).willReturn(user);
 
-    List<User> actual = underTest.findAllUsers(null, email, 0, 0, null);
+    List<User> actual = underTest
+        .findAllUsers(new UserRequestParams(null, email, 1, 1, new String[] {"lastName", "asc"}));
 
     verify(repository).findByEmail(email);
     assertThat(actual).isEqualTo(expected);
@@ -82,7 +84,8 @@ class UserServiceImplTest {
     given(page.getContent()).willReturn(fromRepo);
     given(mapper.toModelFromEntity(entity)).willReturn(user);
 
-    List<User> actual = underTest.findAllUsers(null, null, 1, 1, new String[] {"lastName", "asc"});
+    List<User> actual = underTest
+        .findAllUsers(new UserRequestParams(null, null, 1, 1, new String[] {"lastName", "asc"}));
 
     verify(repository).findAll(pageable);
     assertThat(actual).isEqualTo(expected);
@@ -104,8 +107,8 @@ class UserServiceImplTest {
     given(page.getContent()).willReturn(fromRepo);
     given(mapper.toModelFromEntity(entity)).willReturn(user);
 
-    List<User> actual =
-        underTest.findAllUsers(name, null, 1, 1, new String[] {"firstName", "desc"});
+    List<User> actual = underTest
+        .findAllUsers(new UserRequestParams(name, null, 1, 1, new String[] {"firstName", "desc"}));
 
     verify(repository).findByFirstNameIgnoreCaseContaining(name, pageable);
     assertThat(actual).isEqualTo(expected);
@@ -129,18 +132,17 @@ class UserServiceImplTest {
 
   @Test
   void validUser_CreateUser_Created() {
-    User expected = new User();
-    long id = 3;
-    expected.setId(id);
+    User user = new User();
+    long expected = 3;
     User request = new User();
     UserEntity entity = new UserEntity();
+    entity.setId(expected);
 
     given(repository.findByEmail(any())).willReturn(Optional.empty());
     given(mapper.toEntity(request)).willReturn(entity);
     given(repository.save(entity)).willReturn(entity);
-    given(mapper.toModelFromEntity(entity)).willReturn(expected);
 
-    User actual = underTest.createUser(request);
+    long actual = underTest.createUser(request);
 
     verify(repository).findByEmail(any());
     verify(repository).save(entity);
@@ -167,9 +169,9 @@ class UserServiceImplTest {
 
   @Test
   void validUser_UpdateUser_Updated() {
-    User expected = new User();
+    User user = new User();
     long id = 3;
-    expected.setId(id);
+    user.setId(id);
     User request = new User();
     request.setId(id);
     UserEntity entity = new UserEntity();
@@ -177,15 +179,12 @@ class UserServiceImplTest {
     given(repository.findById(id)).willReturn(Optional.of(entity));
     given(repository.findByEmail(any())).willReturn(Optional.empty());
     given(mapper.toEntity(request)).willReturn(entity);
-    given(repository.save(entity)).willReturn(entity);
-    given(mapper.toModelFromEntity(entity)).willReturn(expected);
 
-    User actual = underTest.updateUser(request);
+    underTest.updateUser(request);
 
     verify(repository).findById(id);
     verify(repository).findByEmail(any());
     verify(repository).save(entity);
-    assertThat(actual).isEqualTo(expected);
   }
 
   @Test

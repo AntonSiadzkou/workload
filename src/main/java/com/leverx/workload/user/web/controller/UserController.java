@@ -3,6 +3,7 @@ package com.leverx.workload.user.web.controller;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.web.converter.ModelDtoConverter;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
+import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import com.leverx.workload.user.web.dto.response.UserResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +41,8 @@ public class UserController {
   @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
       @ApiResponse(code = 500, message = "Internal server error")})
   public List<UserResponse> getAllUsers(
-      @ApiParam(name = "firstName", value = "First name of users by which the selection is filtered")
+      @ApiParam(name = "firstName",
+          value = "First name of users by which the selection is filtered")
       @RequestParam(name = "firstName", required = false) String firstName,
       @ApiParam(name = "email", value = "Email of user by which the selection is filtered")
       @RequestParam(required = false) String email,
@@ -53,8 +55,8 @@ public class UserController {
       @ApiParam(name = "sort", defaultValue = "${page.size.default}",
           value = "Array of pairs (a column and a direction) to sort the selection")
       @RequestParam(defaultValue = "${page.sort.default}") String[] sort) {
-    return service.findAllUsers(firstName, email, page, size, sort).stream().map(mapper::toResponse)
-        .toList();
+    return service.findAllUsers(new UserRequestParams(firstName, email, page, size, sort)).stream()
+        .map(mapper::toResponse).toList();
   }
 
   @GetMapping("/{id}")
@@ -74,9 +76,9 @@ public class UserController {
   @ApiResponses(value = {@ApiResponse(code = 203, message = "Created"),
       @ApiResponse(code = 400, message = "Bad request"),
       @ApiResponse(code = 500, message = "Internal server error")})
-  public UserResponse createUser(
+  public long createUser(
       @ApiParam(name = "user", value = "User information") @RequestBody UserBodyParams user) {
-    return mapper.toResponse(service.createUser(mapper.toModelFromRequest(user)));
+    return service.createUser(mapper.toModelFromRequest(user));
   }
 
   @PutMapping("/{id}")
@@ -85,12 +87,11 @@ public class UserController {
   @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
       @ApiResponse(code = 400, message = "Bad request"),
       @ApiResponse(code = 500, message = "Internal server error")})
-  public UserResponse updateUser(
-      @ApiParam(name = "id", value = "Identifier of user") @PathVariable long id,
+  public void updateUser(@ApiParam(name = "id", value = "Identifier of user") @PathVariable long id,
       @ApiParam(name = "user", value = "User with updated information")
       @RequestBody UserBodyParams user) {
     user.setId(id);
-    return mapper.toResponse(service.updateUser(mapper.toModelFromRequest(user)));
+    service.updateUser(mapper.toModelFromRequest(user));
   }
 
   @DeleteMapping("/{id}")
