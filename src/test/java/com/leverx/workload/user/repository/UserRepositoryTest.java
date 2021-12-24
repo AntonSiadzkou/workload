@@ -8,6 +8,7 @@ import com.leverx.workload.config.LiquibaseConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.user.repository.entity.UserEntity;
+import com.leverx.workload.user.repository.specification.Specifications;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -35,7 +36,7 @@ class UserRepositoryTest {
     UserEntity expected =
         new UserEntity(3, "John", "Archibald", email, "pass24WQ", "senior", "IT", "admin", true);
 
-    UserEntity actual = underTest.findByEmail(email).get();
+    UserEntity actual = underTest.findByEmail(email).orElse(null);
 
     assertThat(actual).isEqualTo(expected);
   }
@@ -46,7 +47,7 @@ class UserRepositoryTest {
     int expected = 3;
 
     Page<UserEntity> actual =
-        underTest.findByFirstNameIgnoreCaseContaining(name, PageRequest.of(0, 5));
+        underTest.findAll(Specifications.hasFirstName(name), PageRequest.of(0, 5));
 
     assertThat(actual.getTotalElements()).isEqualTo(expected);
   }
@@ -57,7 +58,7 @@ class UserRepositoryTest {
     UserEntity expected =
         new UserEntity(2, "Zoey", "Aco", "mail2@joy.com", "pass24WQ", "lead", "IT", "user", true);
 
-    UserEntity actual = underTest.findById(id).get();
+    UserEntity actual = underTest.findById(id).orElse(null);
 
     assertThat(actual).isEqualTo(expected);
   }

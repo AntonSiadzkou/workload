@@ -3,8 +3,9 @@ package com.leverx.workload.user.service.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.leverx.workload.config.MapperConfig;
-import com.leverx.workload.user.model.User;
 import com.leverx.workload.user.repository.entity.UserEntity;
+import com.leverx.workload.user.web.dto.request.UserBodyParams;
+import com.leverx.workload.user.web.dto.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,66 +19,79 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ContextConfiguration(classes = {MapperConfig.class})
 class EntityModelConverterTest {
 
-  private EntityModelConverter underTest;
+  private UserConverter underTest;
   @Autowired
   private ModelMapper mapper;
 
   @BeforeEach
   void setUp() {
-    underTest = new EntityModelConverter(mapper);
+    underTest = new UserConverter(mapper);
   }
 
   @Test
-  void modelAndEntity_IfTheSame_Equal() {
-    User model = createUserModel();
+  void bodyParamsAndEntity_IfTheSame_Equal() {
+    UserBodyParams params = createUserBodyParam();
     UserEntity expected = createUserEntity();
 
-    UserEntity actual = underTest.toEntity(model);
+    UserEntity actual = underTest.toEntity(params);
 
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
-  void modelAndEntity_IfDifferent_NotEqual() {
-    User model = createUserModel();
-    model.setFirstName("Aliona");
+  void bodyParamsAndEntity_IfDifferent_NotEqual() {
+    UserBodyParams params = createUserBodyParam();
+    params.setFirstName("Aliona");
     UserEntity expected = createUserEntity();
     expected.setDepartment("OneMoreDep");
 
-    UserEntity actual = underTest.toEntity(model);
+    UserEntity actual = underTest.toEntity(params);
 
     assertThat(actual).isNotEqualTo(expected);
   }
 
   @Test
-  void entityAndModel_IfTheSame_Equal() {
+  void entityAndResponse_IfTheSame_Equal() {
     UserEntity entity = createUserEntity();
-    User expected = createUserModel();
+    UserResponse expected = createUserResponse();
 
-    User actual = underTest.toModelFromEntity(entity);
+    UserResponse actual = underTest.toResponse(entity);
 
     assertThat(actual).isEqualTo(expected);
   }
 
   @Test
-  void entityAndModel_IfDifferent_NotEqual() {
+  void entityAndResponse_IfDifferent_NotEqual() {
     UserEntity entity = createUserEntity();
-    entity.setLastName("LastKnight");
-    User expected = createUserModel();
-    expected.setEmail("batman@mail.ru");
+    entity.setFirstName("NewName");
+    UserResponse expected = createUserResponse();
+    expected.setDepartment("AnotherDep");
 
-    User actual = underTest.toModelFromEntity(entity);
+    UserResponse actual = underTest.toResponse(entity);
 
     assertThat(actual).isNotEqualTo(expected);
   }
 
-  private User createUserModel() {
-    User user = new User();
-    user.setId(11);
+  private UserBodyParams createUserBodyParam() {
+    UserBodyParams user = new UserBodyParams();
+    user.setId(11L);
     user.setFirstName("John");
     user.setLastName("Admin");
     user.setEmail("email@mail.com");
     user.setPassword("pass24ER");
+    user.setPosition("junior");
+    user.setDepartment("PR");
+    user.setRole("user");
+    user.setActive(true);
+    return user;
+  }
+
+  private UserResponse createUserResponse() {
+    UserResponse user = new UserResponse();
+    user.setId(11);
+    user.setFirstName("John");
+    user.setLastName("Admin");
+    user.setEmail("email@mail.com");
     user.setPosition("junior");
     user.setDepartment("PR");
     user.setRole("user");

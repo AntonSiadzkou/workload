@@ -3,9 +3,6 @@ package com.leverx.workload.config;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -55,6 +52,7 @@ public class JpaConfig {
     return em;
   }
 
+  // todo: change it and delete it
   Properties additionalJpaProperties() {
     Properties properties = new Properties();
     properties.setProperty("hibernate.dialect", hibernateDialect);
@@ -77,11 +75,5 @@ public class JpaConfig {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;
-  }
-
-  @Bean
-  public Validator validator() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    return factory.getValidator();
   }
 }

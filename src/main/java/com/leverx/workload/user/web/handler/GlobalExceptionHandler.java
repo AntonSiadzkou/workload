@@ -19,10 +19,9 @@ public class GlobalExceptionHandler {
         request.getRequestURL().toString());
   }
 
-  @ExceptionHandler({DuplicatedEmailException.class,})
+  @ExceptionHandler({DuplicatedEmailException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ExceptionMessage userWithSuchEmailExistsException(HttpServletRequest request,
-      Exception e) {
+  public ExceptionMessage userWithSuchEmailExistsException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
         request.getRequestURL().toString());
   }

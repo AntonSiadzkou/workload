@@ -90,7 +90,7 @@ class UserControllerTest {
 
   @Test
   void createUser_DuplicatedEmail_Exception() throws Exception {
-    UserBodyParams user = new UserBodyParams();
+    UserBodyParams user = createUserBodyParamsSample();
     user.setEmail("mail4@joy.com");
     mvc.perform(
         post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(user)))
@@ -103,14 +103,19 @@ class UserControllerTest {
   @Test
   void updateUser_UserValid_Updated() throws Exception {
     UserBodyParams user = createUserBodyParamsSample();
-    mvc.perform(put(USER_ENDPOINT + "/{id}", 4).contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(user))).andExpect(status().isOk());
+    user.setId(4L);
+    mvc.perform(
+        put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(user)))
+        .andExpect(status().isOk());
   }
 
   @Test
   void updateUser_UserNotExist_Exception() throws Exception {
-    mvc.perform(put(USER_ENDPOINT + "/{id}", 100).contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(createUserBodyParamsSample()))).andExpect(status().isNotFound())
+    UserBodyParams params = createUserBodyParamsSample();
+    params.setId(999L);
+    mvc.perform(
+        put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(params)))
+        .andExpect(status().isNotFound())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404"))
         .andExpect(jsonPath("$.message").value("Unable to update user. User doesn't exist."));
@@ -133,6 +138,7 @@ class UserControllerTest {
 
   private UserBodyParams createUserBodyParamsSample() {
     UserBodyParams user = new UserBodyParams();
+    user.setId(14L);
     user.setFirstName("Jane");
     user.setLastName("Kane");
     user.setEmail("email11@mail.com");
