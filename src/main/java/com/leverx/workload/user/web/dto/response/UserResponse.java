@@ -1,5 +1,6 @@
 package com.leverx.workload.user.web.dto.response;
 
+import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
 import lombok.Data;
 
 @Data
@@ -9,7 +10,7 @@ public class UserResponse {
   private String lastName;
   private String email;
   private String position;
-  private String department;
+  private DepartmentResponse department;
   private String role;
   private boolean active;
 }

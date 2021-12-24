@@ -1,5 +1,6 @@
 package com.leverx.workload.user.repository.entity;
 
+import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import java.io.Serial;
 import java.io.Serializable;
 import javax.persistence.Column;
@@ -7,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -68,9 +71,10 @@ public class UserEntity implements Serializable {
   @NotBlank(message = "Position is required")
   private String position;
 
-  @Column(nullable = false)
-  @NotBlank(message = "Department is required")
-  private String department;
+  @NotNull(message = "Department is required")
+  @ManyToOne
+  @JoinColumn(name = "department_id")
+  private DepartmentEntity department;
 
   @Column(nullable = false)
   @NotBlank(message = "Role is required")

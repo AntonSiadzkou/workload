@@ -11,9 +11,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
-import com.leverx.workload.config.LiquibaseConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,8 +30,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@ContextConfiguration(classes = {ApplicationConfig.class, MapperConfig.class, LiquibaseConfig.class,
-    WebConfig.class, H2TestConfig.class})
+@ContextConfiguration(
+    classes = {ApplicationConfig.class, MapperConfig.class, WebConfig.class, H2TestConfig.class})
 @WebAppConfiguration
 @Sql("classpath:test-data.sql")
 class UserControllerTest {
@@ -144,7 +144,7 @@ class UserControllerTest {
     user.setEmail("email11@mail.com");
     user.setPassword("pass24AS");
     user.setPosition("lead");
-    user.setDepartment("IT");
+    user.setDepartment(new DepartmentResponse());
     user.setRole("user");
     user.setActive(true);
     return user;

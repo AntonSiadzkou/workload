@@ -47,4 +47,51 @@
     />
   </changeSet>
 
+  <changeSet id="3" author="AntonSiadzkou">
+    <createTable tableName="departments">
+      <column name="id" autoIncrement="true" type="BIGINT" startWith="25">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="department_pkey"/>
+      </column>
+      <column name="title" type="VARCHAR(255)">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="4" author="AntonSiadzkou">
+    <alterSequence
+      schemaName="public"
+      sequenceName="departments_id_seq"
+      dataType="BIGINT"
+      startValue="25"
+      incrementBy="4"
+    />
+  </changeSet>
+
+  <changeSet id="5" author="AntonSiadzkou">
+      <modifyDataType
+        columnName="department"
+        newDataType="BIGINT"
+        schemaName="public"
+        tableName="users"/>
+
+      <renameColumn
+        columnDataType="BIGINT"
+        newColumnName="department_id"
+        oldColumnName="department"
+        schemaName="public"
+        tableName="users"/>
+
+      <addForeignKeyConstraint
+        baseColumnNames="department_id"
+        baseTableName="users"
+        baseTableSchemaName="public"
+        constraintName="fk_user_department"
+        onDelete="RESTRICT"
+        onUpdate="RESTRICT"
+        referencedColumnNames="id"
+        referencedTableName="departments"
+        referencedTableSchemaName="public"
+        validate="true"/>
+  </changeSet>
 </databaseChangeLog>

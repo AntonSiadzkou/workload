@@ -1,5 +1,6 @@
 package com.leverx.workload.user.web.dto.request;
 
+import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -36,8 +37,8 @@ public class UserBodyParams {
   @NotBlank(message = "Position is required")
   private String position;
 
-  @NotBlank(message = "Department is required")
-  private String department;
+  @NotNull(message = "Department is required")
+  private DepartmentResponse department;
 
   @NotBlank(message = "Role is required")
   private String role;

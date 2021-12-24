@@ -32,7 +32,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
-@PropertySource("classpath:app.properties")
 @Api(tags = "User operations")
 public class UserController {
 
