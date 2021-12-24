@@ -1,0 +1,20 @@
+package com.leverx.workload.user.repository;
+
+import com.leverx.workload.user.repository.entity.UserEntity;
+import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+public interface UserRepository
+    extends JpaRepository<UserEntity, Long>, JpaSpecificationExecutor<UserEntity> {
+
+  @Override
+  Page<UserEntity> findAll(Specification<UserEntity> spec, Pageable pageable);
+
+  Optional<UserEntity> findById(Long id);
+
+  Optional<UserEntity> findByEmail(String email);
+}
