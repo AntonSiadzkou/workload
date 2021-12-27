@@ -13,4 +13,6 @@ public interface DepartmentService {
   DepartmentEntity findById(@NotNull Long id);
 
   long createDepartment(@NotNull DepartmentBodyParams department);
+
+  void updateDepartment(@NotNull DepartmentBodyParams department);
 }

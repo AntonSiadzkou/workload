@@ -15,9 +15,6 @@ import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.service.impl.DepartmentServiceImpl;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
-import com.leverx.workload.user.exception.DuplicatedEmailException;
-import com.leverx.workload.user.repository.entity.UserEntity;
-import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -111,7 +108,7 @@ class DepartmentServiceTest {
   }
 
   @Test
-  void userWithDuplicatedEmail_CreateUser_Exception() {
+  void duplicatedTitle_CreateDepartment_Exception() {
     String title = "TEST";
     Exception exception = assertThrows(DuplicatedTitleException.class, () -> {
       DepartmentBodyParams params = new DepartmentBodyParams();
@@ -128,4 +125,65 @@ class DepartmentServiceTest {
     assertThat(actualMessage).contains(expectedMessage);
   }
 
+  @Test
+  void validDepartment_UpdateDepartment_Updated() {
+    long id = 3;
+    DepartmentBodyParams request = new DepartmentBodyParams();
+    request.setId(id);
+    DepartmentEntity entity = new DepartmentEntity();
+    entity.setId(id);
+
+    given(repository.findById(id)).willReturn(Optional.of(entity));
+    given(repository.findByTitle(any())).willReturn(Optional.empty());
+    given(mapper.toEntity(request)).willReturn(entity);
+
+    underTest.updateDepartment(request);
+
+    verify(repository).findById(id);
+    verify(repository).findByTitle(any());
+    verify(repository).save(entity);
+  }
+
+  @Test
+  void notExistedDepartment_UpdateDepartment_Exception() {
+    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+      DepartmentBodyParams department = new DepartmentBodyParams();
+      department.setId(999L);
+
+      underTest.updateDepartment(department);
+    });
+
+    String expectedMessage = "Unable to update department. Department doesn't exist.";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
+  @Test
+  void duplicatedTitle_UpdateDepartment_Exception() {
+    String title = "IT";
+    Exception exception = assertThrows(DuplicatedTitleException.class, () -> {
+      long id = 2;
+      long id2 = 4;
+      DepartmentEntity entity = new DepartmentEntity();
+      entity.setId(id);
+      entity.setTitle(title);
+      DepartmentEntity entity2 = new DepartmentEntity();
+      entity2.setId(id2);
+      entity2.setTitle(title);
+      DepartmentBodyParams params = new DepartmentBodyParams();
+      params.setId(2L);
+      params.setTitle(title);
+
+      given(repository.findById(id)).willReturn(Optional.of(entity));
+      given(repository.findByTitle(title)).willReturn(Optional.of(entity2));
+
+      underTest.updateDepartment(params);
+    });
+
+    String expectedMessage = "Department title = " + title + " already exists";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
 }

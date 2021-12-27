@@ -2,6 +2,7 @@ package com.leverx.workload.department.web.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -11,6 +12,7 @@ import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
+import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -71,7 +73,7 @@ class DepartmentControllerTest {
   }
 
   @Test
-  void createUser_UserValid_Created() throws Exception {
+  void createDepartment_DepartmentValid_Created() throws Exception {
     mvc.perform(post(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
         .content(GeneralUtils.asJsonString(createDepartmentBodyParamsSample())))
         .andExpect(status().isCreated())
@@ -80,7 +82,7 @@ class DepartmentControllerTest {
   }
 
   @Test
-  void createUser_DuplicatedEmail_Exception() throws Exception {
+  void createDepartment_DuplicatedTitle_Exception() throws Exception {
     DepartmentBodyParams department = createDepartmentBodyParamsSample();
     department.setTitle("HR");
     mvc.perform(post(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
@@ -88,6 +90,25 @@ class DepartmentControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("400"))
         .andExpect(jsonPath("$.message").value("Department with title = HR already exists"));
+  }
+
+  @Test
+  void updateDepartment_DepartmentValid_Updated() throws Exception {
+    DepartmentBodyParams params = createDepartmentBodyParamsSample();
+    params.setId(3L);
+    mvc.perform(put(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isOk());
+  }
+
+  @Test
+  void updateDepartment_DepartmentNotExist_Exception() throws Exception {
+    DepartmentBodyParams params = createDepartmentBodyParamsSample();
+    params.setId(999L);
+    mvc.perform(put(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("Unable to update user. User doesn't exist."));
   }
 
   private DepartmentBodyParams createDepartmentBodyParamsSample() {

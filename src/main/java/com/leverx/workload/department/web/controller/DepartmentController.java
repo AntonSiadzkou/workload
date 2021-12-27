@@ -5,8 +5,6 @@ import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
 import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
-import com.leverx.workload.user.exception.NotValidUserException;
-import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -18,10 +16,10 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,6 +71,19 @@ public class DepartmentController {
   @RequestBody @Valid DepartmentBodyParams department, BindingResult bindingResult) {
     GeneralUtils.checkViolations(bindingResult);
     return service.createDepartment(department);
+  }
+
+  @PutMapping
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Update a department in the database")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public void updateUser(
+      @ApiParam(name = "department", value = "Department with updated information") @RequestBody
+      @Valid DepartmentBodyParams department, BindingResult bindingResult) {
+    GeneralUtils.checkViolations(bindingResult);
+    service.updateDepartment(department);
   }
 
 }
