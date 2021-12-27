@@ -8,13 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
+import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -83,7 +83,8 @@ class UserControllerTest {
   @Test
   void createUser_UserValid_Created() throws Exception {
     mvc.perform(post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(createUserBodyParamsSample()))).andExpect(status().isCreated())
+        .content(GeneralUtils.asJsonString(createUserBodyParamsSample())))
+        .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$").value("12"));
   }
@@ -92,9 +93,8 @@ class UserControllerTest {
   void createUser_DuplicatedEmail_Exception() throws Exception {
     UserBodyParams user = createUserBodyParamsSample();
     user.setEmail("mail4@joy.com");
-    mvc.perform(
-        post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(user)))
-        .andExpect(status().isBadRequest())
+    mvc.perform(post(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(user))).andExpect(status().isBadRequest())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("400")).andExpect(jsonPath("$.message")
             .value("Email = mail4@joy.com already exists, email must be unique"));
@@ -104,18 +104,16 @@ class UserControllerTest {
   void updateUser_UserValid_Updated() throws Exception {
     UserBodyParams user = createUserBodyParamsSample();
     user.setId(4L);
-    mvc.perform(
-        put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(user)))
-        .andExpect(status().isOk());
+    mvc.perform(put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(user))).andExpect(status().isOk());
   }
 
   @Test
   void updateUser_UserNotExist_Exception() throws Exception {
     UserBodyParams params = createUserBodyParamsSample();
     params.setId(999L);
-    mvc.perform(
-        put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON).content(asJsonString(params)))
-        .andExpect(status().isNotFound())
+    mvc.perform(put(USER_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isNotFound())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404"))
         .andExpect(jsonPath("$.message").value("Unable to update user. User doesn't exist."));
@@ -148,13 +146,5 @@ class UserControllerTest {
     user.setRole("user");
     user.setActive(true);
     return user;
-  }
-
-  private static String asJsonString(final Object obj) {
-    try {
-      return new ObjectMapper().writeValueAsString(obj);
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
   }
 }

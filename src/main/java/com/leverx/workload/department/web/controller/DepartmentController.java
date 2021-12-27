@@ -2,8 +2,12 @@ package com.leverx.workload.department.web.controller;
 
 import com.leverx.workload.department.service.DepartmentService;
 import com.leverx.workload.department.service.converter.DepartmentConverter;
+import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
 import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
+import com.leverx.workload.user.exception.NotValidUserException;
+import com.leverx.workload.user.web.dto.request.UserBodyParams;
+import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,8 +17,12 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -54,4 +62,17 @@ public class DepartmentController {
       @ApiParam(name = "id", value = "Identifier of department") @PathVariable @Valid Long id) {
     return mapper.toResponse(service.findById(id));
   }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  @ApiOperation(value = "Save a new department to the database")
+  @ApiResponses(value = {@ApiResponse(code = 203, message = "Created"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public long createDepartment(@ApiParam(name = "department", value = "Department information")
+  @RequestBody @Valid DepartmentBodyParams department, BindingResult bindingResult) {
+    GeneralUtils.checkViolations(bindingResult);
+    return service.createDepartment(department);
+  }
+
 }

@@ -8,11 +8,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import com.leverx.workload.department.exception.DepartmentNotExistException;
+import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.department.repository.DepartmentRepository;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.service.impl.DepartmentServiceImpl;
+import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
+import com.leverx.workload.user.exception.DuplicatedEmailException;
+import com.leverx.workload.user.repository.entity.UserEntity;
+import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -85,4 +90,42 @@ class DepartmentServiceTest {
 
     assertThat(actualMessage).contains(expectedMessage);
   }
+
+  @Test
+  void validDepartment_CreateDepartment_Created() {
+    long expected = 3;
+    DepartmentBodyParams request = new DepartmentBodyParams();
+    request.setId(expected);
+    DepartmentEntity entity = new DepartmentEntity();
+    entity.setId(expected);
+
+    given(repository.findByTitle(any())).willReturn(Optional.empty());
+    given(mapper.toEntity(request)).willReturn(entity);
+    given(repository.save(entity)).willReturn(entity);
+
+    long actual = underTest.createDepartment(request);
+
+    verify(repository).findByTitle(any());
+    verify(repository).save(entity);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void userWithDuplicatedEmail_CreateUser_Exception() {
+    String title = "TEST";
+    Exception exception = assertThrows(DuplicatedTitleException.class, () -> {
+      DepartmentBodyParams params = new DepartmentBodyParams();
+      params.setTitle(title);
+
+      given(repository.findByTitle(title)).willReturn(Optional.of(new DepartmentEntity()));
+
+      underTest.createDepartment(params);
+    });
+
+    String expectedMessage = "Department with title = " + title + " already exists";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
 }

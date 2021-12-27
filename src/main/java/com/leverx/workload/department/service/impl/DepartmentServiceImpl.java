@@ -1,10 +1,12 @@
 package com.leverx.workload.department.service.impl;
 
 import com.leverx.workload.department.exception.DepartmentNotExistException;
+import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.department.repository.DepartmentRepository;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.service.DepartmentService;
 import com.leverx.workload.department.service.converter.DepartmentConverter;
+import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -34,5 +36,14 @@ public class DepartmentServiceImpl implements DepartmentService {
   public DepartmentEntity findById(Long id) {
     return repository.findById(id).orElseThrow(() -> new DepartmentNotExistException(
         String.format("Department with id=%s not found", id)));
+  }
+
+  @Override
+  public long createDepartment(DepartmentBodyParams department) {
+    if (repository.findByTitle(department.getTitle()).isPresent()) {
+      throw new DuplicatedTitleException(
+          String.format("Department with title = %s already exists", department.getTitle()));
+    }
+    return repository.save(mapper.toEntity(department)).getId();
   }
 }

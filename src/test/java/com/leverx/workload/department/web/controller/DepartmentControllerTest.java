@@ -1,6 +1,7 @@
 package com.leverx.workload.department.web.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,6 +10,8 @@ import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
+import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -65,5 +68,32 @@ class DepartmentControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404"))
         .andExpect(jsonPath("$.message").value("User with id=9999 not found"));
+  }
+
+  @Test
+  void createUser_UserValid_Created() throws Exception {
+    mvc.perform(post(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(createDepartmentBodyParamsSample())))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").value("12"));
+  }
+
+  @Test
+  void createUser_DuplicatedEmail_Exception() throws Exception {
+    DepartmentBodyParams department = createDepartmentBodyParamsSample();
+    department.setTitle("HR");
+    mvc.perform(post(DEPARTMENT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(department))).andExpect(status().isBadRequest())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("400"))
+        .andExpect(jsonPath("$.message").value("Department with title = HR already exists"));
+  }
+
+  private DepartmentBodyParams createDepartmentBodyParamsSample() {
+    DepartmentBodyParams params = new DepartmentBodyParams();
+    params.setId(7L);
+    params.setTitle("TEST");
+    return params;
   }
 }

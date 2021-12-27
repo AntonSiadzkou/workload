@@ -6,6 +6,7 @@ import com.leverx.workload.user.service.converter.UserConverter;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import com.leverx.workload.user.web.dto.response.UserResponse;
+import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -87,7 +88,7 @@ public class UserController {
   public long createUser(
       @ApiParam(name = "user", value = "User information") @RequestBody @Valid UserBodyParams user,
       BindingResult bindingResult) {
-    checkViolations(bindingResult);
+    GeneralUtils.checkViolations(bindingResult);
     return service.createUser(user);
   }
 
@@ -99,7 +100,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void updateUser(@ApiParam(name = "user", value = "User with updated information")
   @RequestBody @Valid UserBodyParams user, BindingResult bindingResult) {
-    checkViolations(bindingResult);
+    GeneralUtils.checkViolations(bindingResult);
     service.updateUser(user);
   }
 
@@ -114,15 +115,4 @@ public class UserController {
     service.deleteUserById(id);
   }
 
-  private void checkViolations(BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      StringBuilder errors = new StringBuilder();
-      for (FieldError violation : bindingResult.getFieldErrors()) {
-        errors.append("['").append(violation.getField()).append("': '")
-            .append(violation.getRejectedValue()).append("': '")
-            .append(violation.getDefaultMessage()).append("']; ");
-      }
-      throw new NotValidUserException("User has not valid fields. " + errors);
-    }
-  }
 }
