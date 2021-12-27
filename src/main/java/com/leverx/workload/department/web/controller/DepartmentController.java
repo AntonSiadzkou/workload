@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -86,4 +87,14 @@ public class DepartmentController {
     service.updateDepartment(department);
   }
 
+  @DeleteMapping("/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiOperation(value = "Delete a department in the database")
+  @ApiResponses(value = {@ApiResponse(code = 204, message = "No content"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public void deleteDepartmentById(
+      @ApiParam(name = "id", value = "Identifier of a department") @PathVariable @Valid Long id) {
+    service.deleteDepartmentById(id);
+  }
 }

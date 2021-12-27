@@ -15,4 +15,6 @@ public interface DepartmentService {
   long createDepartment(@NotNull DepartmentBodyParams department);
 
   void updateDepartment(@NotNull DepartmentBodyParams department);
+
+  void deleteDepartmentById(@NotNull Long id);
 }

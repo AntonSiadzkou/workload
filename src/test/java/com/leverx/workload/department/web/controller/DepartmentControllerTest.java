@@ -1,5 +1,6 @@
 package com.leverx.workload.department.web.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -12,7 +13,6 @@ import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
-import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,11 +65,11 @@ class DepartmentControllerTest {
   }
 
   @Test
-  void getUserById_UserNotExist_Exception() throws Exception {
+  void getDepartmentById_DepartmentNotExist_Exception() throws Exception {
     mvc.perform(get(DEPARTMENT_ENDPOINT + "/{id}", 9999)).andExpect(status().isNotFound())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404"))
-        .andExpect(jsonPath("$.message").value("User with id=9999 not found"));
+        .andExpect(jsonPath("$.message").value("Department with id=9999 not found"));
   }
 
   @Test
@@ -109,6 +109,21 @@ class DepartmentControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404"))
         .andExpect(jsonPath("$.message").value("Unable to update user. User doesn't exist."));
+  }
+
+  @Test
+  void deleteDepartment_IdValid_Deleted() throws Exception {
+    mvc.perform(delete(DEPARTMENT_ENDPOINT + "/{id}", 2).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void deleteDepartment_DepartmentNotExist_Exception() throws Exception {
+    mvc.perform(delete(DEPARTMENT_ENDPOINT + "/{id}", 999).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404")).andExpect(jsonPath("$.message")
+            .value("Unable to delete the department. Department doesn't exist."));
   }
 
   private DepartmentBodyParams createDepartmentBodyParamsSample() {

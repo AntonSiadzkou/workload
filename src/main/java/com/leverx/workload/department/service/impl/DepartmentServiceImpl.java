@@ -57,9 +57,17 @@ public class DepartmentServiceImpl implements DepartmentService {
             "Unable to update department. Department doesn't exist."));
     long anotherId = repository.findByTitle(department.getTitle()).orElse(entity).getId();
     if (entity.getId() != anotherId) {
-      throw new DuplicatedTitleException(String
-          .format("Unable to update department. Department doesn't exist.", department.getTitle()));
+      throw new DuplicatedTitleException(
+          String.format("Department title = %s already exists", department.getTitle()));
     }
     repository.save(mapper.toEntity(department));
+  }
+
+  @Override
+  @Transactional
+  public void deleteDepartmentById(Long id) {
+    repository.findById(id).orElseThrow(() -> new DepartmentNotExistException(
+        "Unable to delete the department. Department doesn't exist."));
+    repository.deleteById(id);
   }
 }

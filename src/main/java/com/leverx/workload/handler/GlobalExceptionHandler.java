@@ -1,7 +1,6 @@
 package com.leverx.workload.handler;
 
 import com.leverx.workload.department.exception.DepartmentNotExistException;
-import com.leverx.workload.department.exception.DepartmentNotValidException;
 import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.user.exception.DuplicatedEmailException;
 import com.leverx.workload.user.exception.NotValidUserException;
@@ -29,7 +28,7 @@ public class GlobalExceptionHandler {
         request.getRequestURL().toString());
   }
 
-  @ExceptionHandler({NotValidUserException.class, DepartmentNotValidException.class})
+  @ExceptionHandler({NotValidUserException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ExceptionMessage notValidEntityException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),

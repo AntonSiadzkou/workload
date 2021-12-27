@@ -76,7 +76,6 @@ class DepartmentServiceTest {
   void id_findById_Exception() {
     long id = 999;
     Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
-
       given(repository.findById(id)).willReturn(Optional.empty());
 
       underTest.findById(id);
@@ -182,6 +181,32 @@ class DepartmentServiceTest {
     });
 
     String expectedMessage = "Department title = " + title + " already exists";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
+  @Test
+  void validId_DeleteDepartment_Deleted() {
+    long id = 3;
+
+    given(repository.findById(id)).willReturn(Optional.of(new DepartmentEntity()));
+
+    underTest.deleteDepartmentById(id);
+
+    verify(repository).findById(id);
+    verify(repository).deleteById(id);
+  }
+
+  @Test
+  void notExistedDepartmentId_DeleteDepartment_Exception() {
+    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+      long id = 999;
+
+      underTest.deleteDepartmentById(id);
+    });
+
+    String expectedMessage = "Unable to delete the department. Department doesn't exist.";
     String actualMessage = exception.getMessage();
 
     assertThat(actualMessage).contains(expectedMessage);
