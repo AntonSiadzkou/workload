@@ -8,4 +8,7 @@ import javax.validation.constraints.NotNull;
 public interface DepartmentService {
 
   List<DepartmentEntity> findAllDepartments(@NotNull DepartmentRequestParams params);
+
+  DepartmentEntity findById(@NotNull Long id);
+
 }

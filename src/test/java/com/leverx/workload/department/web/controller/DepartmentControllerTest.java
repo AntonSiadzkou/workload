@@ -30,7 +30,7 @@ import org.springframework.web.context.WebApplicationContext;
 @Sql("classpath:test-data.sql")
 class DepartmentControllerTest {
 
-  public static final String USER_ENDPOINT = "/departments";
+  public static final String DEPARTMENT_ENDPOINT = "/departments";
   private final WebApplicationContext webAppContext;
   private MockMvc mvc;
 
@@ -46,9 +46,24 @@ class DepartmentControllerTest {
 
   @Test
   void getAllDepartments_AllGood_ResponseReceived() throws Exception {
-    mvc.perform(get(USER_ENDPOINT)).andExpect(status().isOk())
+    mvc.perform(get(DEPARTMENT_ENDPOINT)).andExpect(status().isOk())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$[0].title").value("HR")).andExpect(jsonPath("$[2].title").value("IT"))
         .andExpect(jsonPath("$.length()").value("3"));
+  }
+
+  @Test
+  void getDepartmentById_DepartmentExists_ResponseOk() throws Exception {
+    mvc.perform(get(DEPARTMENT_ENDPOINT + "/{id}", 2)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.title").value("PR"));
+  }
+
+  @Test
+  void getUserById_UserNotExist_Exception() throws Exception {
+    mvc.perform(get(DEPARTMENT_ENDPOINT + "/{id}", 9999)).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("User with id=9999 not found"));
   }
 }

@@ -1,10 +1,13 @@
 package com.leverx.workload.department.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import com.leverx.workload.department.exception.DepartmentNotExistException;
 import com.leverx.workload.department.repository.DepartmentRepository;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.service.converter.DepartmentConverter;
@@ -12,6 +15,7 @@ import com.leverx.workload.department.service.impl.DepartmentServiceImpl;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,5 +54,35 @@ class DepartmentServiceTest {
     List<DepartmentEntity> actual = underTest.findAllDepartments(params);
 
     assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void id_findById_Department() {
+    long id = 3;
+    DepartmentEntity expected = new DepartmentEntity();
+    expected.setId(id);
+
+    given(repository.findById(id)).willReturn(Optional.of(expected));
+
+    DepartmentEntity actual = underTest.findById(id);
+
+    verify(repository).findById(id);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void id_findById_Exception() {
+    long id = 999;
+    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+
+      given(repository.findById(id)).willReturn(Optional.empty());
+
+      underTest.findById(id);
+    });
+
+    String expectedMessage = "Department with id=" + id + " not found";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
   }
 }

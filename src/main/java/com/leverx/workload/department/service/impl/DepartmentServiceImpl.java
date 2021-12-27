@@ -1,5 +1,6 @@
 package com.leverx.workload.department.service.impl;
 
+import com.leverx.workload.department.exception.DepartmentNotExistException;
 import com.leverx.workload.department.repository.DepartmentRepository;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.service.DepartmentService;
@@ -27,5 +28,11 @@ public class DepartmentServiceImpl implements DepartmentService {
     Pageable pageable = PageRequest.of(params.page(), params.size());
 
     return repository.findAll(pageable).getContent();
+  }
+
+  @Override
+  public DepartmentEntity findById(Long id) {
+    return repository.findById(id).orElseThrow(() -> new DepartmentNotExistException(
+        String.format("Department with id=%s not found", id)));
   }
 }
