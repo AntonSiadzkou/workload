@@ -15,6 +15,8 @@ import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.service.impl.DepartmentServiceImpl;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
+import com.leverx.workload.user.repository.entity.UserEntity;
+import com.leverx.workload.user.service.converter.UserConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,13 +35,16 @@ class DepartmentServiceTest {
   @Mock
   private DepartmentRepository repository;
   @Mock
-  private DepartmentConverter mapper;
+  private DepartmentConverter departmentMapper;
+  @Mock
+  private UserConverter userMapper;
 
   @BeforeEach
   void setUp() {
-    mapper = mock(DepartmentConverter.class);
+    departmentMapper = mock(DepartmentConverter.class);
+    userMapper = mock(UserConverter.class);
     repository = mock(DepartmentRepository.class);
-    underTest = new DepartmentServiceImpl(repository, mapper);
+    underTest = new DepartmentServiceImpl(repository, departmentMapper);
   }
 
   @Test
@@ -88,6 +93,24 @@ class DepartmentServiceTest {
   }
 
   @Test
+  void id_findAllUsersInDepartment_Department() {
+    long id = 3;
+    UserEntity user = new UserEntity();
+    List<UserEntity> expected = new ArrayList<>();
+    expected.add(user);
+    DepartmentEntity department = new DepartmentEntity();
+    department.setId(id);
+    department.setUsers(expected);
+
+    given(repository.findById(id)).willReturn(Optional.of(department));
+
+    List<UserEntity> actual = underTest.findAllUsersInDepartment(id);
+
+    verify(repository).findById(id);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
   void validDepartment_CreateDepartment_Created() {
     long expected = 3;
     DepartmentBodyParams request = new DepartmentBodyParams();
@@ -96,7 +119,7 @@ class DepartmentServiceTest {
     entity.setId(expected);
 
     given(repository.findByTitle(any())).willReturn(Optional.empty());
-    given(mapper.toEntity(request)).willReturn(entity);
+    given(departmentMapper.toEntity(request)).willReturn(entity);
     given(repository.save(entity)).willReturn(entity);
 
     long actual = underTest.createDepartment(request);
@@ -134,7 +157,7 @@ class DepartmentServiceTest {
 
     given(repository.findById(id)).willReturn(Optional.of(entity));
     given(repository.findByTitle(any())).willReturn(Optional.empty());
-    given(mapper.toEntity(request)).willReturn(entity);
+    given(departmentMapper.toEntity(request)).willReturn(entity);
 
     underTest.updateDepartment(request);
 

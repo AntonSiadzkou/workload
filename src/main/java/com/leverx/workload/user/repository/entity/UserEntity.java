@@ -28,7 +28,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = "department")
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor

@@ -65,6 +65,14 @@ class DepartmentControllerTest {
   }
 
   @Test
+  void getAllUsersInDepartment_DepartmentExists_ResponseOk() throws Exception {
+    mvc.perform(get(DEPARTMENT_ENDPOINT + "/{id}" + "/users", 3)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$[0].first_name").value("John"))
+        .andExpect(jsonPath("$.length()").value(4));
+  }
+
+  @Test
   void getDepartmentById_DepartmentNotExist_Exception() throws Exception {
     mvc.perform(get(DEPARTMENT_ENDPOINT + "/{id}", 9999)).andExpect(status().isNotFound())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))

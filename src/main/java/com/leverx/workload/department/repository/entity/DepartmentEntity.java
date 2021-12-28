@@ -28,7 +28,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-@ToString
+@ToString(exclude = "users")
 public class DepartmentEntity implements Serializable {
 
   @Serial

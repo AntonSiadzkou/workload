@@ -5,6 +5,8 @@ import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
 import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
+import com.leverx.workload.user.service.converter.UserConverter;
+import com.leverx.workload.user.web.dto.response.UserResponse;
 import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +36,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class DepartmentController {
 
   private DepartmentService service;
-  private DepartmentConverter mapper;
+  private DepartmentConverter departmentMapper;
+  private UserConverter userMapper;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
@@ -49,7 +52,7 @@ public class DepartmentController {
           value = "Maximum number of items per page")
       @RequestParam(defaultValue = "${page.size.default}") int size) {
     return service.findAllDepartments(new DepartmentRequestParams(page, size)).stream()
-        .map(mapper::toResponse).toList();
+        .map(departmentMapper::toResponse).toList();
   }
 
   @GetMapping("/{id}")
@@ -59,7 +62,17 @@ public class DepartmentController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public DepartmentResponse getDepartmentById(
       @ApiParam(name = "id", value = "Identifier of department") @PathVariable @Valid Long id) {
-    return mapper.toResponse(service.findById(id));
+    return departmentMapper.toResponse(service.findById(id));
+  }
+
+  @GetMapping("/{id}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get list of all users in a specific department")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public List<UserResponse> getAllUsersInDepartment(
+      @ApiParam(name = "id", value = "Identifier of department") @PathVariable @Valid Long id) {
+    return service.findAllUsersInDepartment(id).stream().map(userMapper::toResponse).toList();
   }
 
   @PostMapping
