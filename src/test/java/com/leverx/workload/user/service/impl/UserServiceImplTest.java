@@ -7,8 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.leverx.workload.user.exception.DuplicatedEmailException;
-import com.leverx.workload.user.exception.UserNotExistException;
+import com.leverx.workload.exception.DuplicatedValueException;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.UserService;
@@ -18,6 +17,7 @@ import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -130,7 +130,7 @@ class UserServiceImplTest {
   @Test
   void userWithDuplicatedEmail_CreateUser_Exception() {
     String email = "test@mail.com";
-    Exception exception = assertThrows(DuplicatedEmailException.class, () -> {
+    Exception exception = assertThrows(DuplicatedValueException.class, () -> {
       UserBodyParams params = new UserBodyParams();
       params.setEmail(email);
 
@@ -166,7 +166,7 @@ class UserServiceImplTest {
 
   @Test
   void notExistedUser_UpdateUser_Exception() {
-    Exception exception = assertThrows(UserNotExistException.class, () -> {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
       UserBodyParams user = new UserBodyParams();
       user.setId(999L);
 
@@ -182,7 +182,7 @@ class UserServiceImplTest {
   @Test
   void userWithDuplicatedEmail_UpdateUser_Exception() {
     String email = "test@mail.com";
-    Exception exception = assertThrows(DuplicatedEmailException.class, () -> {
+    Exception exception = assertThrows(DuplicatedValueException.class, () -> {
       long id = 2;
       long id2 = 4;
       UserEntity entity = new UserEntity();
@@ -221,7 +221,7 @@ class UserServiceImplTest {
 
   @Test
   void notExistedUserId_DeleteUser_Exception() {
-    Exception exception = assertThrows(UserNotExistException.class, () -> {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
       long id = 999;
 
       underTest.deleteUserById(id);

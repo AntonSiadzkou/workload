@@ -7,19 +7,19 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import com.leverx.workload.department.exception.DepartmentNotExistException;
-import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.department.repository.DepartmentRepository;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.service.converter.DepartmentConverter;
 import com.leverx.workload.department.service.impl.DepartmentServiceImpl;
 import com.leverx.workload.department.web.dto.request.DepartmentBodyParams;
 import com.leverx.workload.department.web.dto.request.DepartmentRequestParams;
+import com.leverx.workload.exception.DuplicatedValueException;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -80,7 +80,7 @@ class DepartmentServiceTest {
   @Test
   void id_findById_Exception() {
     long id = 999;
-    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
       given(repository.findById(id)).willReturn(Optional.empty());
 
       underTest.findById(id);
@@ -132,7 +132,7 @@ class DepartmentServiceTest {
   @Test
   void duplicatedTitle_CreateDepartment_Exception() {
     String title = "TEST";
-    Exception exception = assertThrows(DuplicatedTitleException.class, () -> {
+    Exception exception = assertThrows(DuplicatedValueException.class, () -> {
       DepartmentBodyParams params = new DepartmentBodyParams();
       params.setTitle(title);
 
@@ -168,7 +168,7 @@ class DepartmentServiceTest {
 
   @Test
   void notExistedDepartment_UpdateDepartment_Exception() {
-    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
       DepartmentBodyParams department = new DepartmentBodyParams();
       department.setId(999L);
 
@@ -184,7 +184,7 @@ class DepartmentServiceTest {
   @Test
   void duplicatedTitle_UpdateDepartment_Exception() {
     String title = "IT";
-    Exception exception = assertThrows(DuplicatedTitleException.class, () -> {
+    Exception exception = assertThrows(DuplicatedValueException.class, () -> {
       long id = 2;
       long id2 = 4;
       DepartmentEntity entity = new DepartmentEntity();
@@ -223,7 +223,7 @@ class DepartmentServiceTest {
 
   @Test
   void notExistedDepartmentId_DeleteDepartment_Exception() {
-    Exception exception = assertThrows(DepartmentNotExistException.class, () -> {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
       long id = 999;
 
       underTest.deleteDepartmentById(id);

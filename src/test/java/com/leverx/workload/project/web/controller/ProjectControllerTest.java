@@ -52,4 +52,20 @@ class ProjectControllerTest {
         .andExpect(jsonPath("$[0].endDate").value("2023-05-28"))
         .andExpect(jsonPath("$.length()").value("1"));
   }
+
+  @Test
+  void getProjectById_ProjectExists_ResponseOk() throws Exception {
+    mvc.perform(get(PROJECT_ENDPOINT + "/{id}", 2)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.name").value("js project"))
+        .andExpect(jsonPath("$.startDate").value("2021-11-09"));
+  }
+
+  @Test
+  void getProjectById_ProjectNotExist_Exception() throws Exception {
+    mvc.perform(get(PROJECT_ENDPOINT + "/{id}", 9999)).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404")).andExpect(
+            jsonPath("$.message").value(String.format("Project with id=%s not found", 9999)));
+  }
 }

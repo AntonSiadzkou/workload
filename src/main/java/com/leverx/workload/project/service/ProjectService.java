@@ -8,4 +8,6 @@ import javax.validation.constraints.NotNull;
 public interface ProjectService {
 
   List<ProjectEntity> findAllProjects(@NotNull ProjectRequestParams params);
+
+  ProjectEntity findById(@NotNull Long id);
 }

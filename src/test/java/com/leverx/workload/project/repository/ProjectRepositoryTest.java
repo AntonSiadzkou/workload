@@ -30,9 +30,6 @@ class ProjectRepositoryTest {
   private ProjectRepository underTest;
 
   @Test
-  void findAll() {}
-
-  @Test
   void endDateAndQuantity_ProjectsExists_CorrectQuantity() {
     String endDate = "2022-11-01";
     int expected = 1;

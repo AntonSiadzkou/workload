@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
@@ -13,6 +14,7 @@ import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,6 +55,20 @@ class ProjectServiceImplTest {
 
     List<ProjectEntity> actual = underTest.findAllProjects(params);
 
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void id_findById_Project() {
+    long id = 2;
+    ProjectEntity expected = new ProjectEntity();
+    expected.setId(id);
+
+    given(repository.findById(id)).willReturn(Optional.of(expected));
+
+    ProjectEntity actual = underTest.findById(id);
+
+    verify(repository).findById(id);
     assertThat(actual).isEqualTo(expected);
   }
 }

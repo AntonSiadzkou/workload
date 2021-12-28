@@ -1,6 +1,5 @@
 package com.leverx.workload.user.web.controller;
 
-import com.leverx.workload.user.exception.NotValidUserException;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.service.converter.UserConverter;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
@@ -15,10 +14,8 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

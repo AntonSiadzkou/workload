@@ -7,6 +7,7 @@ import com.leverx.workload.project.service.ProjectService;
 import com.leverx.workload.project.service.converter.ProjectConverter;
 import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
 import java.util.List;
+import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,13 @@ public class ProjectServiceImpl implements ProjectService {
 
     Page<ProjectEntity> pageData = repository.findAll(spec, pageable);
     return pageData.getContent();
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ProjectEntity findById(@NotNull Long id) {
+    return repository.findById(id).orElseThrow(
+        () -> new EntityNotFoundException(String.format("Project with id=%s not found", id)));
   }
 
   private Sort.Direction getSortDirection(String direction) {
