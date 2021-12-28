@@ -5,6 +5,7 @@ import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.repository.specification.ProjectSpecifications;
 import com.leverx.workload.project.service.ProjectService;
 import com.leverx.workload.project.service.converter.ProjectConverter;
+import com.leverx.workload.project.web.dto.request.ProjectBodyParams;
 import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
 import java.util.List;
 import javax.persistence.EntityNotFoundException;
@@ -47,6 +48,11 @@ public class ProjectServiceImpl implements ProjectService {
   public ProjectEntity findById(@NotNull Long id) {
     return repository.findById(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("Project with id=%s not found", id)));
+  }
+
+  @Override
+  public long createProject(@NotNull ProjectBodyParams params) {
+    return repository.save(mapper.toEntity(params)).getId();
   }
 
   private Sort.Direction getSortDirection(String direction) {

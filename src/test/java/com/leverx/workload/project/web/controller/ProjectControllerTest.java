@@ -1,6 +1,7 @@
 package com.leverx.workload.project.web.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,6 +10,8 @@ import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.project.web.dto.request.ProjectBodyParams;
+import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,5 +70,23 @@ class ProjectControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("404")).andExpect(
             jsonPath("$.message").value(String.format("Project with id=%s not found", 9999)));
+  }
+
+  @Test
+  void createProject_ProjectValid_Created() throws Exception {
+    mvc.perform(post(PROJECT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(createProjectBodyParamsSample())))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$").value("12"));
+  }
+
+  private ProjectBodyParams createProjectBodyParamsSample() {
+    ProjectBodyParams project = new ProjectBodyParams();
+    project.setId(5);
+    project.setName("test project");
+    project.setStartDate("2021-12-22");
+    project.setEndDate("2023-04-20");
+    return project;
   }
 }

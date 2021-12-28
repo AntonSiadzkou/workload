@@ -10,6 +10,7 @@ import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.service.ProjectService;
 import com.leverx.workload.project.service.converter.ProjectConverter;
+import com.leverx.workload.project.web.dto.request.ProjectBodyParams;
 import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -69,6 +70,23 @@ class ProjectServiceImplTest {
     ProjectEntity actual = underTest.findById(id);
 
     verify(repository).findById(id);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void validUser_CreateUser_Created() {
+    long expected = 3;
+    ProjectBodyParams request = new ProjectBodyParams();
+    request.setId(expected);
+    ProjectEntity entity = new ProjectEntity();
+    entity.setId(expected);
+
+    given(mapper.toEntity(request)).willReturn(entity);
+    given(repository.save(entity)).willReturn(entity);
+
+    long actual = underTest.createProject(request);
+
+    verify(repository).save(entity);
     assertThat(actual).isEqualTo(expected);
   }
 }

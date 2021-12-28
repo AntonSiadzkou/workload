@@ -2,8 +2,10 @@ package com.leverx.workload.project.web.controller;
 
 import com.leverx.workload.project.service.ProjectService;
 import com.leverx.workload.project.service.converter.ProjectConverter;
+import com.leverx.workload.project.web.dto.request.ProjectBodyParams;
 import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
 import com.leverx.workload.project.web.dto.responce.ProjectResponse;
+import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -13,8 +15,11 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -68,5 +73,17 @@ public class ProjectController {
   public ProjectResponse getProjectById(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
     return mapper.toResponse(service.findById(id));
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  @ApiOperation(value = "Save a project to the database")
+  @ApiResponses(value = {@ApiResponse(code = 203, message = "Created"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public long createProject(@ApiParam(name = "project", value = "Project information") @RequestBody
+  @Valid ProjectBodyParams project, BindingResult bindingResult) {
+    GeneralUtils.checkViolations(bindingResult);
+    return service.createProject(project);
   }
 }
