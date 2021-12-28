@@ -4,7 +4,7 @@ import com.leverx.workload.user.exception.DuplicatedEmailException;
 import com.leverx.workload.user.exception.UserNotExistException;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
-import com.leverx.workload.user.repository.specification.Specifications;
+import com.leverx.workload.user.repository.specification.UserSpecifications;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.service.converter.UserConverter;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
@@ -36,8 +36,8 @@ public class UserServiceImpl implements UserService {
     Pageable pageable = PageRequest.of(params.page(), params.size(),
         Sort.by(new Order(getSortDirection(params.sortDirection()), params.sortColumn())));
 
-    Specification<UserEntity> spec = Specification.where(Specifications.hasEmail(params.email())
-        .and(Specifications.hasFirstName(params.firstName())));
+    Specification<UserEntity> spec = Specification.where(UserSpecifications.hasEmail(params.email())
+        .and(UserSpecifications.hasFirstName(params.firstName())));
 
     Page<UserEntity> pageData = repository.findAll(spec, pageable);
     return pageData.getContent();

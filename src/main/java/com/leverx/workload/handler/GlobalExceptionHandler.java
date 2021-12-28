@@ -5,6 +5,7 @@ import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.user.exception.DuplicatedEmailException;
 import com.leverx.workload.user.exception.NotValidUserException;
 import com.leverx.workload.user.exception.UserNotExistException;
+import java.time.format.DateTimeParseException;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,14 @@ public class GlobalExceptionHandler {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   public ExceptionMessage notValidEntityException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
+        request.getRequestURL().toString());
+  }
+
+  @ExceptionHandler({DateTimeParseException.class})
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ExceptionMessage wrongFormatException(HttpServletRequest request, Exception e) {
+    return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(),
+        "Wrong number format, must be the same as 'YYYY-MM-DD'",
         request.getRequestURL().toString());
   }
 }

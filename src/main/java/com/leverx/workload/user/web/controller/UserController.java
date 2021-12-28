@@ -57,9 +57,9 @@ public class UserController {
       @ApiParam(name = "size", defaultValue = "${page.size.default}",
           value = "Maximum number of items per page")
       @RequestParam(defaultValue = "${page.size.default}") int size,
-      @ApiParam(name = "sort", defaultValue = "${page.sort.column.default}",
+      @ApiParam(name = "sort", defaultValue = "${page.sort.user.default}",
           value = "A column to sort the selection")
-      @RequestParam(defaultValue = "${page.sort.column.default}") String column,
+      @RequestParam(defaultValue = "${page.sort.user.default}") String column,
       @ApiParam(name = "sort", defaultValue = "${page.sort.direction.default}",
           value = "A direction to sort the selection")
       @RequestParam(defaultValue = "${page.sort.direction.default}") String direction) {
