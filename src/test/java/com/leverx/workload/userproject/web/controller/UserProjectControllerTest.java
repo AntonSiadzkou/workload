@@ -58,4 +58,20 @@ class UserProjectControllerTest {
         .andExpect(jsonPath("$.user.firstName").value("Maria"))
         .andExpect(jsonPath("$.projects.length()").value("1"));
   }
+
+  @Test
+  void getAllUserProjectsByProjectId_AllGood_ResponseReceived() throws Exception {
+    mvc.perform(get("/projects/{id}/users", 4)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.project.name").value("java project"))
+        .andExpect(jsonPath("$.users.length()").value("4"));
+  }
+
+  @Test
+  void getAllCurrentUserProjectsByProjectId_AllGood_ResponseReceived() throws Exception {
+    mvc.perform(get("/projects/{id}/users/current", 4)).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.project.name").value("java project"))
+        .andExpect(jsonPath("$.users.length()").value("3"));
+  }
 }

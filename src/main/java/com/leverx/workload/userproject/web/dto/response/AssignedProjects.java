@@ -3,7 +3,7 @@ package com.leverx.workload.userproject.web.dto.response;
 import lombok.Data;
 
 @Data
-public class ProjectWithoutUsers {
+public class AssignedProjects {
 
   private String projectName;
   private String assignDate;

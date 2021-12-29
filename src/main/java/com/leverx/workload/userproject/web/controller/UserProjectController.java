@@ -2,6 +2,7 @@ package com.leverx.workload.userproject.web.controller;
 
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
+import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -42,5 +43,25 @@ public class UserProjectController {
   public UserWithAssignedProjectsResponse getAllCurrentUserProjectsByUserId(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
     return service.findAllCurrentUserProjectsByUserId(id);
+  }
+
+  @GetMapping("/projects/{id}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get list of all assigned users for a specific project")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public ProjectWithAssignedUsersResponse getAllUserProjectsByProjectId(
+      @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    return service.findAllUserProjectsByProjectId(id);
+  }
+
+  @GetMapping("/projects/{id}/users/current")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Get list of all current and future assigned users for a specific project")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public ProjectWithAssignedUsersResponse getAllCurrentUserProjectsByProjectId(
+      @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    return service.findAllCurrentUserProjectsByProjectId(id);
   }
 }

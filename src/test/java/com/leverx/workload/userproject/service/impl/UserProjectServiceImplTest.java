@@ -5,7 +5,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
+import com.leverx.workload.project.service.converter.ProjectConverter;
+import com.leverx.workload.project.web.dto.responce.ProjectResponse;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
@@ -15,7 +18,9 @@ import com.leverx.workload.userproject.repository.entity.UserProjectEntity;
 import com.leverx.workload.userproject.repository.entity.UserProjectId;
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
-import com.leverx.workload.userproject.web.dto.response.ProjectWithoutUsers;
+import com.leverx.workload.userproject.web.dto.response.AssignedProjects;
+import com.leverx.workload.userproject.web.dto.response.AssignedUsers;
+import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +41,24 @@ class UserProjectServiceImplTest {
   @Mock
   private UserRepository userRepository;
   @Mock
+  private ProjectRepository projectRepository;
+  @Mock
   private UserProjectConverter userProjectMapper;
   @Mock
   private UserConverter userMapper;
+  @Mock
+  private ProjectConverter projectMapper;
 
   @BeforeEach
   void setUp() {
     userProjectRepository = mock(UserProjectRepository.class);
     userRepository = mock(UserRepository.class);
+    projectRepository = mock(ProjectRepository.class);
     userProjectMapper = mock(UserProjectConverter.class);
     userMapper = mock(UserConverter.class);
-    underTest = new UserProjectServiceImpl(userProjectRepository, userRepository, userProjectMapper,
-        userMapper);
+    projectMapper = mock(ProjectConverter.class);
+    underTest = new UserProjectServiceImpl(userProjectRepository, userRepository, projectRepository,
+        userProjectMapper, userMapper, projectMapper);
   }
 
   @Test
@@ -74,10 +85,10 @@ class UserProjectServiceImplTest {
     UserResponse userResponse = new UserResponse();
     userResponse.setId(id);
 
-    ProjectWithoutUsers assignedProject = new ProjectWithoutUsers();
+    AssignedProjects assignedProject = new AssignedProjects();
     assignedProject.setProjectName("test");
 
-    List<ProjectWithoutUsers> assignedProjects = new ArrayList<>();
+    List<AssignedProjects> assignedProjects = new ArrayList<>();
     assignedProjects.add(assignedProject);
 
     UserWithAssignedProjectsResponse expected =
@@ -86,14 +97,61 @@ class UserProjectServiceImplTest {
     given(userRepository.findById(id)).willReturn(Optional.of(user));
     given(userProjectRepository.findAllByIdUserOrderByAssignDate(user)).willReturn(projects);
     given(userMapper.toResponse(user)).willReturn(userResponse);
-    given(userProjectMapper.toProjectWithoutUsers(userProject)).willReturn(assignedProject);
+    given(userProjectMapper.toAssignedProjects(userProject)).willReturn(assignedProject);
 
     UserWithAssignedProjectsResponse actual = underTest.findAllUserProjectsByUserId(id);
 
     verify(userRepository).findById(id);
     verify(userProjectRepository).findAllByIdUserOrderByAssignDate(user);
     verify(userMapper).toResponse(user);
-    verify(userProjectMapper).toProjectWithoutUsers(userProject);
+    verify(userProjectMapper).toAssignedProjects(userProject);
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void id_findAllUserProjectsByProjectId_ListOfUserProjects() {
+    long id = 4;
+    ProjectEntity project = new ProjectEntity();
+    project.setId(id);
+
+    long id2 = 2;
+    UserEntity user = new UserEntity();
+    user.setId(id2);
+    user.setFirstName("Test");
+
+    UserProjectId upId = new UserProjectId();
+    upId.setProject(project);
+    upId.setUser(user);
+
+    UserProjectEntity userProject = new UserProjectEntity();
+    userProject.setId(upId);
+
+    List<UserProjectEntity> projects = new ArrayList<>();
+    projects.add(userProject);
+
+    ProjectResponse projectResponse = new ProjectResponse();
+    projectResponse.setId(id);
+
+    AssignedUsers assignedUser = new AssignedUsers();
+    assignedUser.setFirstName("Test");
+
+    List<AssignedUsers> assignedUsers = new ArrayList<>();
+    assignedUsers.add(assignedUser);
+
+    ProjectWithAssignedUsersResponse expected =
+        new ProjectWithAssignedUsersResponse(projectResponse, assignedUsers);
+
+    given(projectRepository.findById(id)).willReturn(Optional.of(project));
+    given(userProjectRepository.findAllByIdProjectOrderByAssignDate(project)).willReturn(projects);
+    given(projectMapper.toResponse(project)).willReturn(projectResponse);
+    given(userProjectMapper.toAssignedUsers(userProject)).willReturn(assignedUser);
+
+    ProjectWithAssignedUsersResponse actual = underTest.findAllUserProjectsByProjectId(id);
+
+    verify(projectRepository).findById(id);
+    verify(userProjectRepository).findAllByIdProjectOrderByAssignDate(project);
+    verify(projectMapper).toResponse(project);
+    verify(userProjectMapper).toAssignedUsers(userProject);
     assertThat(actual).isEqualTo(expected);
   }
 }

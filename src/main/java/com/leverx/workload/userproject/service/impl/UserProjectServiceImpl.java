@@ -1,5 +1,8 @@
 package com.leverx.workload.userproject.service.impl;
 
+import com.leverx.workload.project.repository.ProjectRepository;
+import com.leverx.workload.project.repository.entity.ProjectEntity;
+import com.leverx.workload.project.service.converter.ProjectConverter;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
@@ -7,6 +10,7 @@ import com.leverx.workload.userproject.repository.UserProjectRepository;
 import com.leverx.workload.userproject.repository.entity.UserProjectEntity;
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
+import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
 import java.time.LocalDate;
 import java.util.List;
@@ -24,8 +28,10 @@ public class UserProjectServiceImpl implements UserProjectService {
 
   private final UserProjectRepository userProjectRepository;
   private final UserRepository userRepository;
+  private final ProjectRepository projectRepository;
   private final UserProjectConverter userProjectMapper;
   private final UserConverter userMapper;
+  private final ProjectConverter projectMapper;
 
   @Override
   @Transactional(readOnly = true)
@@ -45,6 +51,24 @@ public class UserProjectServiceImpl implements UserProjectService {
     return toUserResponse(user, currentAssignedProjects);
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public ProjectWithAssignedUsersResponse findAllUserProjectsByProjectId(Long id) {
+    ProjectEntity project = checkAndGetProjectById(id);
+    List<UserProjectEntity> assignedUsers =
+        userProjectRepository.findAllByIdProjectOrderByAssignDate(project);
+    return toProjectResponse(project, assignedUsers);
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public ProjectWithAssignedUsersResponse findAllCurrentUserProjectsByProjectId(Long id) {
+    ProjectEntity project = checkAndGetProjectById(id);
+    List<UserProjectEntity> currentAssignedUsers = userProjectRepository
+        .findAllByIdProjectAndCancelDateGreaterThanOrderByAssignDate(project, LocalDate.now());
+    return toProjectResponse(project, currentAssignedUsers);
+  }
+
   private UserEntity checkAndGetUserById(Long id) {
     return userRepository.findById(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("User with id=%s not found", id)));
@@ -53,6 +77,17 @@ public class UserProjectServiceImpl implements UserProjectService {
   private UserWithAssignedProjectsResponse toUserResponse(UserEntity user,
       List<UserProjectEntity> projects) {
     return new UserWithAssignedProjectsResponse(userMapper.toResponse(user),
-        projects.stream().map(userProjectMapper::toProjectWithoutUsers).toList());
+        projects.stream().map(userProjectMapper::toAssignedProjects).toList());
+  }
+
+  private ProjectEntity checkAndGetProjectById(Long id) {
+    return projectRepository.findById(id).orElseThrow(
+        () -> new EntityNotFoundException(String.format("Project with id=%s not found", id)));
+  }
+
+  private ProjectWithAssignedUsersResponse toProjectResponse(ProjectEntity project,
+      List<UserProjectEntity> users) {
+    return new ProjectWithAssignedUsersResponse(projectMapper.toResponse(project),
+        users.stream().map(userProjectMapper::toAssignedUsers).toList());
   }
 }
