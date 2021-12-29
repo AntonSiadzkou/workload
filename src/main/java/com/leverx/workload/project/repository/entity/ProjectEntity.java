@@ -1,18 +1,23 @@
 package com.leverx.workload.project.repository.entity;
 
+import com.leverx.workload.user.repository.entity.UserEntity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,8 +29,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode
-@ToString
+@ToString(exclude = "users")
 public class ProjectEntity implements Serializable {
 
   @Serial
@@ -45,4 +49,16 @@ public class ProjectEntity implements Serializable {
 
   @Column(name = "end_date")
   private LocalDate endDate;
+
+  @ManyToMany
+  @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "id_project"),
+      inverseJoinColumns = @JoinColumn(name = "id_user"))
+  private List<UserEntity> users;
+
+  public boolean add(UserEntity entity) {
+    if (users == null) {
+      users = new ArrayList<>();
+    }
+    return users.add(entity);
+  }
 }
