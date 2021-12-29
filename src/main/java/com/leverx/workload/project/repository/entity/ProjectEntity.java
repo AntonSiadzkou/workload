@@ -40,7 +40,7 @@ public class ProjectEntity implements Serializable {
   @NotBlank(message = "Name is required")
   private String name;
 
-  @Column(name = "start_date", updatable = false)
+  @Column(name = "start_date")
   private LocalDate startDate;
 
   @Column(name = "end_date")

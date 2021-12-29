@@ -2,6 +2,7 @@ package com.leverx.workload.project.web.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -79,6 +80,36 @@ class ProjectControllerTest {
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$").value("12"));
+  }
+
+  @Test
+  void updateProject_ProjectValid_Updated() throws Exception {
+    ProjectBodyParams params = createProjectBodyParamsSample();
+    params.setId(2L);
+    mvc.perform(put(PROJECT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isOk());
+  }
+
+  @Test
+  void updateProject_ProjectNotExist_Exception() throws Exception {
+    ProjectBodyParams params = createProjectBodyParamsSample();
+    params.setId(999L);
+    mvc.perform(put(PROJECT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("Unable to update project. Project doesn't exist."));
+  }
+
+  @Test
+  void updateProject_NotValidDates_Exception() throws Exception {
+    ProjectBodyParams params = createProjectBodyParamsSample();
+    params.setEndDate("2000-12-22");
+    mvc.perform(put(PROJECT_ENDPOINT).contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(params))).andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("400")).andExpect(
+            jsonPath("$.message").value("The project end date must be later than the start date."));
   }
 
   private ProjectBodyParams createProjectBodyParamsSample() {

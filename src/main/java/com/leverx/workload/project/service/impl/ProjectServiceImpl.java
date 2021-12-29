@@ -1,5 +1,6 @@
 package com.leverx.workload.project.service.impl;
 
+import com.leverx.workload.exception.NotValidEntityException;
 import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.repository.specification.ProjectSpecifications;
@@ -51,11 +52,30 @@ public class ProjectServiceImpl implements ProjectService {
   }
 
   @Override
-  public long createProject(@NotNull ProjectBodyParams params) {
-    return repository.save(mapper.toEntity(params)).getId();
+  @Transactional
+  public long createProject(@NotNull ProjectBodyParams project) {
+    ProjectEntity entity = mapper.toEntity(project);
+    checkDates(entity);
+    return repository.save(entity).getId();
+  }
+
+  @Override
+  @Transactional
+  public void updateProject(@NotNull ProjectBodyParams project) {
+    repository.findById(project.getId()).orElseThrow(
+        () -> new EntityNotFoundException("Unable to update project. Project doesn't exist."));
+    ProjectEntity entity = mapper.toEntity(project);
+    checkDates(entity);
+    repository.save(mapper.toEntity(project));
   }
 
   private Sort.Direction getSortDirection(String direction) {
     return (direction.equals("desc")) ? Sort.Direction.DESC : Sort.Direction.ASC;
+  }
+
+  private void checkDates(ProjectEntity entity) {
+    if (entity.getEndDate() != null && entity.getEndDate().isBefore(entity.getStartDate())) {
+      throw new NotValidEntityException("The project end date must be later than the start date.");
+    }
   }
 }

@@ -46,7 +46,8 @@ public class DepartmentServiceImpl implements DepartmentService {
   public List<UserEntity> findAllUsersInDepartment(@NotNull Long id) {
     DepartmentEntity department = repository.findById(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("Department with id=%s not found", id)));
-    return department.getUsers().stream().toList(); // todo fix how to get lazy correctly: may we return Stream?
+    return department.getUsers().stream().toList(); // todo fix how to get lazy correctly: may we
+                                                    // return Stream?
   }
 
   @Override

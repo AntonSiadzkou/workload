@@ -13,4 +13,6 @@ public interface ProjectService {
   ProjectEntity findById(@NotNull Long id);
 
   long createProject(@NotNull ProjectBodyParams params);
+
+  void updateProject(@NotNull ProjectBodyParams params);
 }

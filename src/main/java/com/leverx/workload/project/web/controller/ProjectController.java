@@ -19,6 +19,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -86,4 +87,17 @@ public class ProjectController {
     GeneralUtils.checkViolations(bindingResult);
     return service.createProject(project);
   }
+
+  @PutMapping
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(value = "Update a project in the database")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public void updateProject(@ApiParam(name = "project", value = "Project with updated information")
+  @RequestBody @Valid ProjectBodyParams project, BindingResult bindingResult) {
+    GeneralUtils.checkViolations(bindingResult);
+    service.updateProject(project);
+  }
+
 }
