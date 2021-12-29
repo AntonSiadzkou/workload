@@ -14,8 +14,6 @@ import com.leverx.workload.project.service.ProjectService;
 import com.leverx.workload.project.service.converter.ProjectConverter;
 import com.leverx.workload.project.web.dto.request.ProjectBodyParams;
 import com.leverx.workload.project.web.dto.request.ProjectRequestParams;
-import com.leverx.workload.user.repository.entity.UserEntity;
-import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +147,32 @@ class ProjectServiceImplTest {
     });
 
     String expectedMessage = "The project end date must be later than the start date.";
+    String actualMessage = exception.getMessage();
+
+    assertThat(actualMessage).contains(expectedMessage);
+  }
+
+  @Test
+  void validId_DeleteProject_Deleted() {
+    long id = 3;
+
+    given(repository.findById(id)).willReturn(Optional.of(new ProjectEntity()));
+
+    underTest.deleteProjectById(id);
+
+    verify(repository).findById(id);
+    verify(repository).deleteById(id);
+  }
+
+  @Test
+  void notExistedProjectId_DeleteProject_Exception() {
+    Exception exception = assertThrows(EntityNotFoundException.class, () -> {
+      long id = 999;
+
+      underTest.deleteProjectById(id);
+    });
+
+    String expectedMessage = "Unable to delete project. Project doesn't exist.";
     String actualMessage = exception.getMessage();
 
     assertThat(actualMessage).contains(expectedMessage);

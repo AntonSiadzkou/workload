@@ -1,5 +1,6 @@
 package com.leverx.workload.project.web.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -110,6 +111,21 @@ class ProjectControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.statusCode").value("400")).andExpect(
             jsonPath("$.message").value("The project end date must be later than the start date."));
+  }
+
+  @Test
+  void deleteProject_IdValid_ProjectDeleted() throws Exception {
+    mvc.perform(delete(PROJECT_ENDPOINT + "/{id}", 2).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void deleteProject_ProjectNotExist_Exception() throws Exception {
+    mvc.perform(delete(PROJECT_ENDPOINT + "/{id}", 999).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404"))
+        .andExpect(jsonPath("$.message").value("Unable to delete project. Project doesn't exist."));
   }
 
   private ProjectBodyParams createProjectBodyParamsSample() {

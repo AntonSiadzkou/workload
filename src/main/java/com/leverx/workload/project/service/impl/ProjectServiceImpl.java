@@ -38,7 +38,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     Specification<ProjectEntity> spec =
         Specification.where(ProjectSpecifications.greaterThanStartDate(params.startDate()))
-            .and(ProjectSpecifications.lessThanStartDate(params.endDate()));
+            .and(ProjectSpecifications.lessThanEndDate(params.endDate()));
 
     Page<ProjectEntity> pageData = repository.findAll(spec, pageable);
     return pageData.getContent();
@@ -67,6 +67,14 @@ public class ProjectServiceImpl implements ProjectService {
     ProjectEntity entity = mapper.toEntity(project);
     checkDates(entity);
     repository.save(mapper.toEntity(project));
+  }
+
+  @Override
+  @Transactional
+  public void deleteProjectById(@NotNull Long id) {
+    repository.findById(id).orElseThrow(
+        () -> new EntityNotFoundException("Unable to delete project. Project doesn't exist."));
+    repository.deleteById(id);
   }
 
   private Sort.Direction getSortDirection(String direction) {

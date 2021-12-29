@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ProjectSpecifications {
+
   private ProjectSpecifications() {
     throw new UnsupportedOperationException("Class instance can't be instantiated.");
   }
@@ -20,7 +21,7 @@ public class ProjectSpecifications {
     };
   }
 
-  public static Specification<ProjectEntity> lessThanStartDate(String endDate) {
+  public static Specification<ProjectEntity> lessThanEndDate(String endDate) {
     return (projectEntity, criteriaQuery, criteriaBuilder) -> {
       if (endDate != null) {
         return criteriaBuilder.lessThan(projectEntity.get("endDate"), LocalDate.parse(endDate));

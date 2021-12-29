@@ -15,4 +15,6 @@ public interface ProjectService {
   long createProject(@NotNull ProjectBodyParams params);
 
   void updateProject(@NotNull ProjectBodyParams params);
+
+  void deleteProjectById(@NotNull Long id);
 }

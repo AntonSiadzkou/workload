@@ -35,7 +35,7 @@ class ProjectRepositoryTest {
     int expected = 1;
 
     Page<ProjectEntity> actual =
-        underTest.findAll(ProjectSpecifications.lessThanStartDate(endDate), PageRequest.of(0, 5));
+        underTest.findAll(ProjectSpecifications.lessThanEndDate(endDate), PageRequest.of(0, 5));
 
     assertThat(actual.getTotalElements()).isEqualTo(expected);
   }

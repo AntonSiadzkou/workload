@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class ProjectBodyParams {
+
   private long id;
 
   @NotBlank(message = "Name is required")
