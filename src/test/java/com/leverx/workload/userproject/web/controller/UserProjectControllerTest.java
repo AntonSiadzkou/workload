@@ -80,6 +80,13 @@ class UserProjectControllerTest {
   }
 
   @Test
+  void getAllAvailableUsers_AllGood_ResponseReceived() throws Exception {
+    mvc.perform(get("/projects/users/available")).andExpect(status().isOk())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.users.length()").value("1"));
+  }
+
+  @Test
   void saveUserProject_AllValid_Created() throws Exception {
     mvc.perform(put("/projects/users").contentType(MediaType.APPLICATION_JSON)
         .content(GeneralUtils.asJsonString(createUserProjectBodyParamsSample())))

@@ -1,7 +1,8 @@
 package com.leverx.workload.userproject.web.controller;
 
+import com.leverx.workload.user.service.converter.UserConverter;
+import com.leverx.workload.user.web.dto.response.UserResponse;
 import com.leverx.workload.userproject.service.UserProjectService;
-import com.leverx.workload.userproject.service.converter.UserProjectConverter;
 import com.leverx.workload.userproject.web.dto.request.UserProjectBodyParams;
 import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserProjectController {
 
   private final UserProjectService service;
-  private final UserProjectConverter mapper;
+  private final UserConverter userMapper;
 
   @GetMapping("/users/{id}/projects")
   @ResponseStatus(HttpStatus.OK)
@@ -69,6 +72,21 @@ public class UserProjectController {
   public ProjectWithAssignedUsersResponse getAllCurrentUserProjectsByProjectId(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
     return service.findAllCurrentUserProjectsByProjectId(id);
+  }
+
+  @GetMapping("/projects/users/available")
+  @ResponseStatus(HttpStatus.OK)
+  @ApiOperation(
+      value = "Get list of available users (users without project) within a specified period from specified date.")
+  @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public List<UserResponse> getAllAvailableUsers(
+      @ApiParam(name = "days", defaultValue = "${available.days}",
+          value = "A specified period (days)")
+      @RequestParam(defaultValue = "${available.days}") int days,
+      @ApiParam(name = "date", defaultValue = "current date", value = "Specified date")
+      @RequestParam(required = false) String date) {
+    return service.findAllAvailableUsers(days, date).stream().map(userMapper::toResponse).toList();
   }
 
   @PutMapping("/projects/users") // todo ? Put(response 201) or Post(can update dates)

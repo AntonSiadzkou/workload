@@ -73,6 +73,20 @@ public class UserProjectServiceImpl implements UserProjectService {
   }
 
   @Override
+  @Transactional(readOnly = true)
+  public List<UserEntity> findAllAvailableUsers(@NotNull Integer days, String date) {
+    final LocalDate fromDate = (date != null) ? LocalDate.parse(date) : LocalDate.now();
+    final LocalDate tillDate = fromDate.plusDays(days);
+    List<UserEntity> activeUsers = userRepository.findAllByActiveAndRole(true, "user");
+    List<UserProjectEntity> userProjectsWithinPeriod =
+        userProjectRepository.findAllActiveProjectWithinPeriod(fromDate, tillDate);
+    List<UserEntity> usersWithActiveProject = userProjectsWithinPeriod.stream()
+        .map(userProject -> userProject.getId().getUser()).distinct().toList();
+    activeUsers.removeAll(usersWithActiveProject);
+    return activeUsers;
+  }
+
+  @Override
   @Transactional
   public void saveUserProject(UserProjectBodyParams userProject) {
     UserEntity user = checkAndGetUserById(userProject.getUserId());

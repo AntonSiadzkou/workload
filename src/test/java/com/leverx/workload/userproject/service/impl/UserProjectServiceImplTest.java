@@ -158,6 +158,53 @@ class UserProjectServiceImplTest {
   }
 
   @Test
+  void daysAndDate_findAllAvailableUsers_ListOfUsers() {
+    int days = 10;
+    String date = "2021-01-01";
+
+    long id = 4;
+    ProjectEntity project = new ProjectEntity();
+    project.setId(id);
+
+    long idUs = 2;
+    UserEntity user = new UserEntity();
+    user.setId(idUs);
+
+    long idUs2 = 55;
+    UserEntity user2 = new UserEntity();
+    user2.setId(idUs2);
+
+    UserProjectId upId = new UserProjectId();
+    upId.setProject(project);
+    upId.setUser(user2);
+
+    UserProjectEntity userProject = new UserProjectEntity();
+    userProject.setId(upId);
+
+    List<UserEntity> activeUsers = new ArrayList<>();
+    activeUsers.add(user);
+    activeUsers.add(user2);
+
+    List<UserProjectEntity> userProjectsWithinPeriod = new ArrayList<>();
+    userProjectsWithinPeriod.add(userProject);
+
+    List<UserEntity> expected = new ArrayList<>();
+    expected.add(user);
+
+    given(userRepository.findAllByActiveAndRole(true, "user")).willReturn(activeUsers);
+    given(userProjectRepository.findAllActiveProjectWithinPeriod(LocalDate.of(2021, 1, 1),
+        LocalDate.of(2021, 1, 11))).willReturn(userProjectsWithinPeriod);
+
+    List<UserEntity> actual = underTest.findAllAvailableUsers(days, date);
+
+    verify(userRepository).findAllByActiveAndRole(true, "user");
+    verify(userProjectRepository).findAllActiveProjectWithinPeriod(LocalDate.of(2021, 1, 1),
+        LocalDate.of(2021, 1, 11));
+
+    assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
   void validUserProject_SaveUserProject_Created() {
     long id = 4;
     ProjectEntity project = new ProjectEntity();
