@@ -15,6 +15,7 @@ import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -70,8 +71,7 @@ public class UserProjectController {
     return service.findAllCurrentUserProjectsByProjectId(id);
   }
 
-  @PutMapping("/projects/users") // todo Put or Post - with post we can update dates but put
-                                 // response always 201?
+  @PutMapping("/projects/users") // todo ? Put(response 201) or Post(can update dates)
   @ResponseStatus(HttpStatus.CREATED)
   @ApiOperation(
       value = "Add a specific user to a specific project for a period (create or update userProject)")
@@ -84,4 +84,16 @@ public class UserProjectController {
     service.saveUserProject(userProject);
   }
 
+  @DeleteMapping("/projects/{projectId}/users/{userId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ApiOperation(value = "Delete a specific user from a specific project")
+  @ApiResponses(value = {@ApiResponse(code = 204, message = "No content"),
+      @ApiResponse(code = 400, message = "Bad request"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public void deleteUserProject(
+      @ApiParam(name = "projectId", value = "Identifier of project") @PathVariable
+      @Valid Long projectId,
+      @ApiParam(name = "userId", value = "Identifier of user") @PathVariable @Valid Long userId) {
+    service.deleteUserProject(projectId, userId);
+  }
 }

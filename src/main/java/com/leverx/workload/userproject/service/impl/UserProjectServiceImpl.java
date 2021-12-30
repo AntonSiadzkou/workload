@@ -91,6 +91,17 @@ public class UserProjectServiceImpl implements UserProjectService {
     userProjectRepository.save(entity);
   }
 
+  @Override
+  @Transactional
+  public void deleteUserProject(Long projectId, Long userId) {
+    ProjectEntity project = checkAndGetProjectById(projectId);
+    UserEntity user = checkAndGetUserById(userId);
+    UserProjectId id = new UserProjectId(user, project);
+    userProjectRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(
+        "Unable to delete user with project.There is no such pair of identifiers."));
+    userProjectRepository.deleteById(id);
+  }
+
   private UserEntity checkAndGetUserById(Long id) {
     return userRepository.findById(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("User with id=%s not found", id)));

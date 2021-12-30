@@ -1,5 +1,6 @@
 package com.leverx.workload.userproject.web.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -84,6 +85,22 @@ class UserProjectControllerTest {
         .content(GeneralUtils.asJsonString(createUserProjectBodyParamsSample())))
         .andExpect(status().isCreated())
         .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  @Test
+  void deleteUserProject_UserProjectIdValid_UserProjectDeleted() throws Exception {
+    mvc.perform(delete("/projects/{id}/users/{id}", 1, 1).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void deleteUserProject_UserProjectNotExist_Exception() throws Exception {
+    mvc.perform(
+        delete("/projects/{id}/users/{id}", 999, 999).contentType(MediaType.APPLICATION_JSON))
+        .andExpect(status().isNotFound())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.statusCode").value("404")).andExpect(jsonPath("$.message")
+            .value("Unable to delete user with project.There is no such pair of identifiers."));
   }
 
   private UserProjectBodyParams createUserProjectBodyParamsSample() {

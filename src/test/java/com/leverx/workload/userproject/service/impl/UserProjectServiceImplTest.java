@@ -69,9 +69,9 @@ class UserProjectServiceImplTest {
     UserEntity user = new UserEntity();
     user.setId(id);
 
-    long id2 = 2;
+    long idPr = 2;
     ProjectEntity project = new ProjectEntity();
-    project.setId(id2);
+    project.setId(idPr);
     project.setName("test");
 
     UserProjectId upId = new UserProjectId();
@@ -116,9 +116,9 @@ class UserProjectServiceImplTest {
     ProjectEntity project = new ProjectEntity();
     project.setId(id);
 
-    long id2 = 2;
+    long idUs = 2;
     UserEntity user = new UserEntity();
-    user.setId(id2);
+    user.setId(idUs);
     user.setFirstName("Test");
 
     UserProjectId upId = new UserProjectId();
@@ -165,9 +165,9 @@ class UserProjectServiceImplTest {
     project.setStartDate(LocalDate.of(2021, 4, 10));
     project.setEndDate(LocalDate.of(2023, 4, 10));
 
-    long id2 = 2;
+    long idUs = 2;
     UserEntity user = new UserEntity();
-    user.setId(id2);
+    user.setId(idUs);
 
     UserProjectId upId = new UserProjectId();
     upId.setProject(project);
@@ -179,18 +179,47 @@ class UserProjectServiceImplTest {
     userProject.setCancelDate(LocalDate.of(2022, 6, 10));
 
     UserProjectBodyParams params = new UserProjectBodyParams();
-    params.setUserId(id);
-    params.setProjectId(id2);
+    params.setUserId(idUs);
+    params.setProjectId(id);
     params.setAssignDate("2022-04-10");
     params.setCancelDate("2022-06-10");
 
-    given(userRepository.findById(id)).willReturn(Optional.of(user));
-    given(projectRepository.findById(id2)).willReturn(Optional.of(project));
+    given(userRepository.findById(idUs)).willReturn(Optional.of(user));
+    given(projectRepository.findById(id)).willReturn(Optional.of(project));
 
     underTest.saveUserProject(params);
 
-    verify(userRepository).findById(id);
-    verify(projectRepository).findById(id2);
+    verify(userRepository).findById(idUs);
+    verify(projectRepository).findById(id);
     verify(userProjectRepository).save(userProject);
+  }
+
+  @Test
+  void validUserProjectId_DeleteUserProject_Deleted() {
+    long id = 4;
+    ProjectEntity project = new ProjectEntity();
+    project.setId(id);
+
+    long idUs = 2;
+    UserEntity user = new UserEntity();
+    user.setId(idUs);
+
+    UserProjectId upId = new UserProjectId();
+    upId.setProject(project);
+    upId.setUser(user);
+
+    UserProjectEntity userProject = new UserProjectEntity();
+    userProject.setId(upId);
+
+    given(projectRepository.findById(id)).willReturn(Optional.of(project));
+    given(userRepository.findById(idUs)).willReturn(Optional.of(user));
+    given(userProjectRepository.findById(upId)).willReturn(Optional.of(userProject));
+
+    underTest.deleteUserProject(id, idUs);
+
+    verify(userRepository).findById(idUs);
+    verify(projectRepository).findById(id);
+    verify(userProjectRepository).findById(upId);
+    verify(userProjectRepository).deleteById(upId);
   }
 }

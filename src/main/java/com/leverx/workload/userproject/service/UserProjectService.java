@@ -16,4 +16,6 @@ public interface UserProjectService {
   ProjectWithAssignedUsersResponse findAllCurrentUserProjectsByProjectId(@NotNull Long id);
 
   void saveUserProject(@NotNull UserProjectBodyParams userProject);
+
+  void deleteUserProject(@NotNull Long projectId, @NotNull Long userId);
 }
