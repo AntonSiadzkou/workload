@@ -18,10 +18,12 @@ import com.leverx.workload.userproject.repository.entity.UserProjectEntity;
 import com.leverx.workload.userproject.repository.entity.UserProjectId;
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
+import com.leverx.workload.userproject.web.dto.request.UserProjectBodyParams;
 import com.leverx.workload.userproject.web.dto.response.AssignedProjects;
 import com.leverx.workload.userproject.web.dto.response.AssignedUsers;
 import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -153,5 +155,42 @@ class UserProjectServiceImplTest {
     verify(projectMapper).toResponse(project);
     verify(userProjectMapper).toAssignedUsers(userProject);
     assertThat(actual).isEqualTo(expected);
+  }
+
+  @Test
+  void validUserProject_SaveUserProject_Created() {
+    long id = 4;
+    ProjectEntity project = new ProjectEntity();
+    project.setId(id);
+    project.setStartDate(LocalDate.of(2021, 4, 10));
+    project.setEndDate(LocalDate.of(2023, 4, 10));
+
+    long id2 = 2;
+    UserEntity user = new UserEntity();
+    user.setId(id2);
+
+    UserProjectId upId = new UserProjectId();
+    upId.setProject(project);
+    upId.setUser(user);
+
+    UserProjectEntity userProject = new UserProjectEntity();
+    userProject.setId(upId);
+    userProject.setAssignDate(LocalDate.of(2022, 4, 10));
+    userProject.setCancelDate(LocalDate.of(2022, 6, 10));
+
+    UserProjectBodyParams params = new UserProjectBodyParams();
+    params.setUserId(id);
+    params.setProjectId(id2);
+    params.setAssignDate("2022-04-10");
+    params.setCancelDate("2022-06-10");
+
+    given(userRepository.findById(id)).willReturn(Optional.of(user));
+    given(projectRepository.findById(id2)).willReturn(Optional.of(project));
+
+    underTest.saveUserProject(params);
+
+    verify(userRepository).findById(id);
+    verify(projectRepository).findById(id2);
+    verify(userProjectRepository).save(userProject);
   }
 }

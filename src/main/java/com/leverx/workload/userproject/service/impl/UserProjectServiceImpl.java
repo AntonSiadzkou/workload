@@ -1,5 +1,6 @@
 package com.leverx.workload.userproject.service.impl;
 
+import com.leverx.workload.exception.NotValidEntityException;
 import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.service.converter.ProjectConverter;
@@ -8,8 +9,10 @@ import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
 import com.leverx.workload.userproject.repository.UserProjectRepository;
 import com.leverx.workload.userproject.repository.entity.UserProjectEntity;
+import com.leverx.workload.userproject.repository.entity.UserProjectId;
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
+import com.leverx.workload.userproject.web.dto.request.UserProjectBodyParams;
 import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
 import java.time.LocalDate;
@@ -67,6 +70,25 @@ public class UserProjectServiceImpl implements UserProjectService {
     List<UserProjectEntity> currentAssignedUsers = userProjectRepository
         .findAllByIdProjectAndCancelDateGreaterThanOrderByAssignDate(project, LocalDate.now());
     return toProjectResponse(project, currentAssignedUsers);
+  }
+
+  @Override
+  @Transactional
+  public void saveUserProject(UserProjectBodyParams userProject) {
+    UserEntity user = checkAndGetUserById(userProject.getUserId());
+    ProjectEntity project = checkAndGetProjectById(userProject.getProjectId());
+    LocalDate assignDateFromRequest = LocalDate.parse(userProject.getAssignDate());
+    LocalDate cancelDateFromRequest = LocalDate.parse(userProject.getCancelDate());
+    if (assignDateFromRequest.isBefore(project.getStartDate())
+        || cancelDateFromRequest.isAfter(project.getEndDate())
+        || assignDateFromRequest.isAfter(cancelDateFromRequest)) {
+      throw new NotValidEntityException(
+          "Wrong dates: assign date must not be before start date of the project, cancel date must not "
+              + "be after end date of the project, and assign date must be before cancel date.");
+    }
+    UserProjectEntity entity = new UserProjectEntity(new UserProjectId(user, project),
+        assignDateFromRequest, cancelDateFromRequest);
+    userProjectRepository.save(entity);
   }
 
   private UserEntity checkAndGetUserById(Long id) {

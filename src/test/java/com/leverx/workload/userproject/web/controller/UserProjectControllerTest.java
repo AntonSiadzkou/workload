@@ -1,6 +1,7 @@
 package com.leverx.workload.userproject.web.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -9,6 +10,8 @@ import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.userproject.web.dto.request.UserProjectBodyParams;
+import com.leverx.workload.util.GeneralUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -73,5 +76,22 @@ class UserProjectControllerTest {
         .andExpect(content().contentType(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.project.name").value("java project"))
         .andExpect(jsonPath("$.users.length()").value("3"));
+  }
+
+  @Test
+  void saveUserProject_AllValid_Created() throws Exception {
+    mvc.perform(put("/projects/users").contentType(MediaType.APPLICATION_JSON)
+        .content(GeneralUtils.asJsonString(createUserProjectBodyParamsSample())))
+        .andExpect(status().isCreated())
+        .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+  }
+
+  private UserProjectBodyParams createUserProjectBodyParamsSample() {
+    UserProjectBodyParams params = new UserProjectBodyParams();
+    params.setUserId(3L);
+    params.setProjectId(3L);
+    params.setAssignDate("2022-04-05");
+    params.setAssignDate("2022-11-28");
+    return params;
   }
 }

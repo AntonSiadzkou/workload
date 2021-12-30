@@ -2,8 +2,10 @@ package com.leverx.workload.userproject.web.controller;
 
 import com.leverx.workload.userproject.service.UserProjectService;
 import com.leverx.workload.userproject.service.converter.UserProjectConverter;
+import com.leverx.workload.userproject.web.dto.request.UserProjectBodyParams;
 import com.leverx.workload.userproject.web.dto.response.ProjectWithAssignedUsersResponse;
 import com.leverx.workload.userproject.web.dto.response.UserWithAssignedProjectsResponse;
+import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -12,8 +14,11 @@ import io.swagger.annotations.ApiResponses;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,4 +69,19 @@ public class UserProjectController {
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
     return service.findAllCurrentUserProjectsByProjectId(id);
   }
+
+  @PutMapping("/projects/users") // todo Put or Post - with post we can update dates but put
+                                 // response always 201?
+  @ResponseStatus(HttpStatus.CREATED)
+  @ApiOperation(
+      value = "Add a specific user to a specific project for a period (create or update userProject)")
+  @ApiResponses(value = {@ApiResponse(code = 201, message = "Created"),
+      @ApiResponse(code = 500, message = "Internal server error")})
+  public void addUserToProject(
+      @ApiParam(name = "userProject", value = "Project and user with assign and cancel dates")
+      @RequestBody @Valid UserProjectBodyParams userProject, BindingResult bindingResult) {
+    GeneralUtils.checkViolations(bindingResult);
+    service.saveUserProject(userProject);
+  }
+
 }

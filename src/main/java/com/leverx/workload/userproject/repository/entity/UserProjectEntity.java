@@ -3,6 +3,7 @@ package com.leverx.workload.userproject.repository.entity;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -33,4 +34,21 @@ public class UserProjectEntity implements Serializable {
 
   @Column(name = "cancel_date")
   private LocalDate cancelDate;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    UserProjectEntity entity = (UserProjectEntity) o;
+    return Objects.equals(id, entity.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return id != null ? id.hashCode() : 0;
+  }
 }
