@@ -1,0 +1,33 @@
+<configuration scan="true" scanPeriod="120 seconds">
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <property name="LOG_FILE" value="workload" />
+  <property name="LOG_DIR" value="logs" />
+  <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_DIR}/${LOG_FILE}.log</file>
+    <encoder>
+      <pattern>%date %level [%thread] [%file:%line] %msg%n</pattern>
+    </encoder>
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <fileNamePattern>logs/archive/workload-%d{yyyy-MM-dd}.%i.zip</fileNamePattern>
+      <!--each file should be at most 1 MB, keep 60 days worth of history, but at most 20 MB-->
+      <maxFileSize>1MB</maxFileSize>
+      <maxHistory>60</maxHistory>
+      <totalSizeCap>20MB</totalSizeCap>
+    </rollingPolicy>
+  </appender>
+
+  <logger name="com.leverx.workload" level="info">
+    <appender-ref ref="ROLLING"/>
+  </logger>
+
+  <root level="info">
+    <appender-ref ref="STDOUT"/>
+  </root>
+
+</configuration>

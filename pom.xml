@@ -21,6 +21,7 @@
     <javax.el.validator.version>3.0.0</javax.el.validator.version>
     <modelmapper.version>2.4.4</modelmapper.version>
     <springfox.swagger.version>3.0.0</springfox.swagger.version>
+    <logback.version>1.2.10</logback.version>
     <jackson.version>2.13.0</jackson.version>
     <servlet.version>4.0.1</servlet.version>
     <lombok.version>1.18.22</lombok.version>
@@ -95,6 +96,12 @@
       <groupId>org.modelmapper</groupId>
       <artifactId>modelmapper</artifactId>
       <version>${modelmapper.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>${logback.version}</version>
     </dependency>
 
     <dependency>

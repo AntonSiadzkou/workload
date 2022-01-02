@@ -16,6 +16,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/departments")
 @AllArgsConstructor
 @Api(tags = "Department operations")
+@Slf4j
 public class DepartmentController {
 
   private DepartmentService service;
@@ -51,6 +53,7 @@ public class DepartmentController {
       @ApiParam(name = "size", defaultValue = "${page.size.default}",
           value = "Maximum number of items per page")
       @RequestParam(defaultValue = "${page.size.default}") int size) {
+    log.info("Start getting all departments with pagination");
     return service.findAllDepartments(new DepartmentRequestParams(page, size)).stream()
         .map(departmentMapper::toResponse).toList();
   }
@@ -62,6 +65,7 @@ public class DepartmentController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public DepartmentResponse getDepartmentById(
       @ApiParam(name = "id", value = "Identifier of department") @PathVariable @Valid Long id) {
+    log.info("Start getting a specific department");
     return departmentMapper.toResponse(service.findById(id));
   }
 
@@ -72,6 +76,7 @@ public class DepartmentController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public List<UserResponse> getAllUsersInDepartment(
       @ApiParam(name = "id", value = "Identifier of department") @PathVariable @Valid Long id) {
+    log.info("Start getting all users in a specific department");
     return service.findAllUsersInDepartment(id).stream().map(userMapper::toResponse).toList();
   }
 
@@ -83,6 +88,7 @@ public class DepartmentController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public long createDepartment(@ApiParam(name = "department", value = "Department information")
   @RequestBody @Valid DepartmentBodyParams department, BindingResult bindingResult) {
+    log.info("Start saving a new department to the database");
     GeneralUtils.checkViolations(bindingResult);
     return service.createDepartment(department);
   }
@@ -96,6 +102,7 @@ public class DepartmentController {
   public void updateUser(
       @ApiParam(name = "department", value = "Department with updated information") @RequestBody
       @Valid DepartmentBodyParams department, BindingResult bindingResult) {
+    log.info("Start updating a department in the database");
     GeneralUtils.checkViolations(bindingResult);
     service.updateDepartment(department);
   }
@@ -108,6 +115,7 @@ public class DepartmentController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void deleteDepartmentById(
       @ApiParam(name = "id", value = "Identifier of a department") @PathVariable @Valid Long id) {
+    log.info("Start deleting a department in the database");
     service.deleteDepartmentById(id);
   }
 }

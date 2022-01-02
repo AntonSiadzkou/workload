@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 @AllArgsConstructor
 @Api(tags = "User operations")
+@Slf4j
 public class UserController {
 
   private final UserService service;
@@ -60,6 +62,7 @@ public class UserController {
       @ApiParam(name = "sort", defaultValue = "${page.sort.direction.default}",
           value = "A direction to sort the selection")
       @RequestParam(defaultValue = "${page.sort.direction.default}") String direction) {
+    log.info("Start getting all users");
     return service
         .findAllUsers(new UserRequestParams(firstName, email, page, size, column, direction))
         .stream().map(mapper::toResponse).toList();
@@ -73,6 +76,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public UserResponse getUserById(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start getting a user by id");
     return mapper.toResponse(service.findById(id));
   }
 
@@ -85,6 +89,7 @@ public class UserController {
   public long createUser(
       @ApiParam(name = "user", value = "User information") @RequestBody @Valid UserBodyParams user,
       BindingResult bindingResult) {
+    log.info("Start saving a user to the database");
     GeneralUtils.checkViolations(bindingResult);
     return service.createUser(user);
   }
@@ -97,6 +102,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void updateUser(@ApiParam(name = "user", value = "User with updated information")
   @RequestBody @Valid UserBodyParams user, BindingResult bindingResult) {
+    log.info("Start updating a user in the database");
     GeneralUtils.checkViolations(bindingResult);
     service.updateUser(user);
   }
@@ -109,7 +115,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void deleteUserById(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start deleting a user in the database");
     service.deleteUserById(id);
   }
-
 }
