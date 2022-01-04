@@ -4,6 +4,7 @@ import com.leverx.workload.exception.NotValidEntityException;
 import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.service.converter.ProjectConverter;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
@@ -88,7 +89,7 @@ public class UserProjectServiceImpl implements UserProjectService {
     final LocalDate fromDate = (date != null) ? LocalDate.parse(date) : LocalDate.now();
     final LocalDate tillDate = fromDate.plusDays(days);
     log.info("Searching all available users from " + fromDate + " till " + tillDate);
-    List<UserEntity> activeUsers = userRepository.findAllByActiveAndRole(true, "user");
+    List<UserEntity> activeUsers = userRepository.findAllByActiveAndRole(true, Role.USER);
     List<UserProjectEntity> userProjectsWithinPeriod =
         userProjectRepository.findAllActiveProjectWithinPeriod(fromDate, tillDate);
     List<UserEntity> usersWithActiveProject = userProjectsWithinPeriod.stream()

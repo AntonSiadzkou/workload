@@ -2,12 +2,15 @@ package com.leverx.workload.user.repository.entity;
 
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
+import com.leverx.workload.security.service.model.Role;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -80,8 +83,9 @@ public class UserEntity implements Serializable {
   private DepartmentEntity department;
 
   @Column(nullable = false)
-  @NotBlank(message = "Role is required")
-  private String role;
+  @NotNull(message = "Role is required")
+  @Enumerated(value = EnumType.STRING)
+  private Role role;
 
   @Column(name = "is_active", nullable = false)
   @NotNull(message = "Active status is required")
