@@ -1,5 +1,7 @@
-package com.leverx.workload.user.web.handler;
+package com.leverx.workload.handler;
 
+import com.leverx.workload.department.exception.DepartmentNotExistException;
+import com.leverx.workload.department.exception.DuplicatedTitleException;
 import com.leverx.workload.user.exception.DuplicatedEmailException;
 import com.leverx.workload.user.exception.NotValidUserException;
 import com.leverx.workload.user.exception.UserNotExistException;
@@ -12,23 +14,23 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-  @ExceptionHandler(UserNotExistException.class)
+  @ExceptionHandler({UserNotExistException.class, DepartmentNotExistException.class})
   @ResponseStatus(HttpStatus.NOT_FOUND)
-  public ExceptionMessage userNotExistException(HttpServletRequest request, Exception e) {
+  public ExceptionMessage entityNotExistException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.NOT_FOUND.value(), e.getMessage(),
         request.getRequestURL().toString());
   }
 
-  @ExceptionHandler({DuplicatedEmailException.class})
+  @ExceptionHandler({DuplicatedEmailException.class, DuplicatedTitleException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ExceptionMessage userWithSuchEmailExistsException(HttpServletRequest request, Exception e) {
+  public ExceptionMessage duplicatedFieldException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
         request.getRequestURL().toString());
   }
 
-  @ExceptionHandler(NotValidUserException.class)
+  @ExceptionHandler({NotValidUserException.class})
   @ResponseStatus(HttpStatus.BAD_REQUEST)
-  public ExceptionMessage userNotValidException(HttpServletRequest request, Exception e) {
+  public ExceptionMessage notValidEntityException(HttpServletRequest request, Exception e) {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
         request.getRequestURL().toString());
   }

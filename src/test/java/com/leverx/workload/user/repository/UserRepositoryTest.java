@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.leverx.workload.config.ApplicationConfig;
 import com.leverx.workload.config.H2TestConfig;
-import com.leverx.workload.config.LiquibaseConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
+import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.repository.specification.Specifications;
 import org.junit.jupiter.api.Test;
@@ -21,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
-@ContextConfiguration(classes = {ApplicationConfig.class, MapperConfig.class, LiquibaseConfig.class,
-    WebConfig.class, H2TestConfig.class})
+@ContextConfiguration(
+    classes = {ApplicationConfig.class, MapperConfig.class, WebConfig.class, H2TestConfig.class})
 @WebAppConfiguration
 @Sql("classpath:test-data.sql")
 class UserRepositoryTest {
@@ -33,8 +33,8 @@ class UserRepositoryTest {
   @Test
   void emailAndUser_UserExistsAndTheSame_EqualUsers() {
     String email = "mail3@joy.com";
-    UserEntity expected =
-        new UserEntity(3, "John", "Archibald", email, "pass24WQ", "senior", "IT", "admin", true);
+    UserEntity expected = new UserEntity(3, "John", "Archibald", email, "pass24WQ", "senior",
+        new DepartmentEntity(), "admin", true);
 
     UserEntity actual = underTest.findByEmail(email).orElse(null);
 
@@ -55,8 +55,8 @@ class UserRepositoryTest {
   @Test
   void idAndUser_UserExistsAndTheSame_EqualUsers() {
     long id = 2;
-    UserEntity expected =
-        new UserEntity(2, "Zoey", "Aco", "mail2@joy.com", "pass24WQ", "lead", "IT", "user", true);
+    UserEntity expected = new UserEntity(2, "Zoey", "Aco", "mail2@joy.com", "pass24WQ", "lead",
+        new DepartmentEntity(), "user", true);
 
     UserEntity actual = underTest.findById(id).orElse(null);
 

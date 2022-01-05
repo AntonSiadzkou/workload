@@ -21,4 +21,5 @@ public class UserConverter {
   public UserResponse toResponse(UserEntity entity) {
     return Objects.isNull(entity) ? null : mapper.map(entity, UserResponse.class);
   }
+
 }
