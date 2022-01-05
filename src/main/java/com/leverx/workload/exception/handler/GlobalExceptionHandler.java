@@ -3,6 +3,7 @@ package com.leverx.workload.exception.handler;
 import com.leverx.workload.exception.DuplicatedValueException;
 import com.leverx.workload.exception.JwtAuthenticationException;
 import com.leverx.workload.exception.NotValidEntityException;
+import com.opencsv.exceptions.CsvRuntimeException;
 import java.time.format.DateTimeParseException;
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +70,15 @@ public class GlobalExceptionHandler {
     log.warn(request.getRequestURL().toString() + " : " + HttpStatus.FORBIDDEN.value() + " : "
         + e.getMessage());
     return new ExceptionMessage(HttpStatus.FORBIDDEN.value(), e.getMessage(),
+        request.getRequestURL().toString());
+  }
+
+  @ExceptionHandler(CsvRuntimeException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ExceptionMessage csvException(HttpServletRequest request, Exception e) {
+    log.warn(request.getRequestURL().toString() + " : " + HttpStatus.BAD_REQUEST.value() + " : "
+        + e.getMessage());
+    return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
         request.getRequestURL().toString());
   }
 }
