@@ -8,7 +8,7 @@ import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.user.repository.entity.UserEntity;
-import com.leverx.workload.user.repository.specification.Specifications;
+import com.leverx.workload.user.repository.specification.UserSpecifications;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,7 +47,7 @@ class UserRepositoryTest {
     int expected = 3;
 
     Page<UserEntity> actual =
-        underTest.findAll(Specifications.hasFirstName(name), PageRequest.of(0, 5));
+        underTest.findAll(UserSpecifications.hasFirstName(name), PageRequest.of(0, 5));
 
     assertThat(actual.getTotalElements()).isEqualTo(expected);
   }

@@ -94,4 +94,30 @@
         referencedTableSchemaName="public"
         validate="true"/>
   </changeSet>
+
+  <changeSet id="6" author="AntonSiadzkou">
+    <createTable tableName="projects">
+      <column name="id" autoIncrement="true" type="BIGINT" startWith="35">
+        <constraints nullable="false" primaryKey="true" primaryKeyName="project_pkey"/>
+      </column>
+      <column name="name" type="VARCHAR(255)">
+        <constraints nullable="false"/>
+      </column>
+      <column name="start_date" type="DATE">
+        <constraints nullable="false"/>
+      </column>
+      <column name="end_date" type="DATE">
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="7" author="AntonSiadzkou">
+    <alterSequence
+      schemaName="public"
+      sequenceName="projects_id_seq"
+      dataType="BIGINT"
+      startValue="35"
+      incrementBy="4"
+    />
+  </changeSet>
 </databaseChangeLog>

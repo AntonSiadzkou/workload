@@ -1,7 +1,7 @@
 package com.leverx.workload.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leverx.workload.user.exception.NotValidUserException;
+import com.leverx.workload.exception.NotValidEntityException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
@@ -19,7 +19,7 @@ public class GeneralUtils {
             .append(violation.getRejectedValue()).append("': '")
             .append(violation.getDefaultMessage()).append("']; ");
       }
-      throw new NotValidUserException("User has not valid fields. " + errors);
+      throw new NotValidEntityException("Request has not valid fields. " + errors);
     }
   }
 

@@ -3,8 +3,8 @@ package com.leverx.workload.user.repository.specification;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import org.springframework.data.jpa.domain.Specification;
 
-public class Specifications {
-  private Specifications() {
+public class UserSpecifications {
+  private UserSpecifications() {
     throw new UnsupportedOperationException("Class instance can't be instantiated.");
   }
 
