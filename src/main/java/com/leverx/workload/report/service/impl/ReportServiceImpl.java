@@ -2,6 +2,7 @@ package com.leverx.workload.report.service.impl;
 
 import com.leverx.workload.exception.ReportDownloadException;
 import com.leverx.workload.report.service.ReportService;
+import com.leverx.workload.report.task.report.UnoccupiedReportTask;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.time.Month;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,8 +24,14 @@ public class ReportServiceImpl implements ReportService {
 
   private static final String FILE_NAME_PATTERN = "^Workload-%s.xlsx$";
 
+  private final UnoccupiedReportTask unoccupiedReportTask;
+
+  public ReportServiceImpl(UnoccupiedReportTask unoccupiedReportTask) {
+    this.unoccupiedReportTask = unoccupiedReportTask;
+  }
+
   @Override
-  public XSSFWorkbook downloadWorkloadReport(String month) {
+  public Workbook downloadWorkloadReport(String month) {
     Month reportMonth =
         (month == null) ? LocalDate.now().getMonth() : Month.valueOf(month.trim().toUpperCase());
     File report = getReport(reportMonth);
@@ -34,6 +42,11 @@ public class ReportServiceImpl implements ReportService {
       log.error("Exception of writing excel-report");
       throw new ReportDownloadException(e.getMessage());
     }
+  }
+
+  @Override
+  public Workbook downloadUnoccupiedUsersWithinMonth() {
+    return unoccupiedReportTask.createUnoccupiedReport();
   }
 
   private File getReport(Month month) {
