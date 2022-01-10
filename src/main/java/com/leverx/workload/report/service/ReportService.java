@@ -1,8 +1,10 @@
 package com.leverx.workload.report.service;
 
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.usermodel.Workbook;
 
 public interface ReportService {
 
-  XSSFWorkbook downloadWorkloadReport(String month);
+  Workbook downloadWorkloadReport(String month);
+
+  Workbook downloadUnoccupiedUsersWithinMonth();
 }
