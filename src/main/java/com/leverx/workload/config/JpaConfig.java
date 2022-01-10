@@ -35,10 +35,10 @@ public class JpaConfig {
   @Value("${jdbc.password}")
   private String jdbcPassword;
 
-  @Value("${jpa.hibernate.dialect}")
+  @Value("${hibernate.dialect}")
   private String hibernateDialect;
 
-  @Value("${jpa.hibernate.show_sql}")
+  @Value("${hibernate.show_sql}")
   private String hibernateShowSql;
 
   @Bean

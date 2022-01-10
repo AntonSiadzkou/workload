@@ -1,12 +1,23 @@
 package com.leverx.workload.user.repository.entity;
 
+import com.leverx.workload.department.repository.entity.DepartmentEntity;
+import com.leverx.workload.project.repository.entity.ProjectEntity;
+import com.leverx.workload.security.service.model.Role;
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
@@ -15,7 +26,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,8 +35,7 @@ import lombok.ToString;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = {"department", "projects"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity implements Serializable {
@@ -68,15 +77,29 @@ public class UserEntity implements Serializable {
   @NotBlank(message = "Position is required")
   private String position;
 
-  @Column(nullable = false)
-  @NotBlank(message = "Department is required")
-  private String department;
+  @NotNull(message = "Department is required")
+  @ManyToOne
+  @JoinColumn(name = "department_id")
+  private DepartmentEntity department;
 
   @Column(nullable = false)
-  @NotBlank(message = "Role is required")
-  private String role;
+  @NotNull(message = "Role is required")
+  @Enumerated(value = EnumType.STRING)
+  private Role role;
 
   @Column(name = "is_active", nullable = false)
   @NotNull(message = "Active status is required")
   private Boolean active;
+
+  @ManyToMany
+  @JoinTable(name = "user_project", joinColumns = @JoinColumn(name = "id_user"),
+      inverseJoinColumns = @JoinColumn(name = "id_project"))
+  private List<ProjectEntity> projects;
+
+  public boolean add(ProjectEntity entity) {
+    if (projects == null) {
+      projects = new ArrayList<>();
+    }
+    return projects.add(entity);
+  }
 }

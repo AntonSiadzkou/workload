@@ -3,6 +3,9 @@ package com.leverx.workload.user.service.converter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.leverx.workload.config.MapperConfig;
+import com.leverx.workload.department.repository.entity.DepartmentEntity;
+import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.user.web.dto.response.UserResponse;
@@ -25,7 +28,7 @@ class EntityModelConverterTest {
 
   @BeforeEach
   void setUp() {
-    underTest = new UserConverter(mapper);
+    // underTest = new UserConverter(mapper);
   }
 
   @Test
@@ -43,7 +46,7 @@ class EntityModelConverterTest {
     UserBodyParams params = createUserBodyParam();
     params.setFirstName("Aliona");
     UserEntity expected = createUserEntity();
-    expected.setDepartment("OneMoreDep");
+    expected.setLastName("OneMoreName");
 
     UserEntity actual = underTest.toEntity(params);
 
@@ -65,7 +68,7 @@ class EntityModelConverterTest {
     UserEntity entity = createUserEntity();
     entity.setFirstName("NewName");
     UserResponse expected = createUserResponse();
-    expected.setDepartment("AnotherDep");
+    expected.setLastName("AnotherName");
 
     UserResponse actual = underTest.toResponse(entity);
 
@@ -80,7 +83,7 @@ class EntityModelConverterTest {
     user.setEmail("email@mail.com");
     user.setPassword("pass24ER");
     user.setPosition("junior");
-    user.setDepartment("PR");
+    user.setDepartment(new DepartmentResponse());
     user.setRole("user");
     user.setActive(true);
     return user;
@@ -93,8 +96,8 @@ class EntityModelConverterTest {
     user.setLastName("Admin");
     user.setEmail("email@mail.com");
     user.setPosition("junior");
-    user.setDepartment("PR");
-    user.setRole("user");
+    user.setDepartment(new DepartmentResponse());
+    user.setRole("ROLE_USER");
     user.setActive(true);
     return user;
   }
@@ -107,8 +110,8 @@ class EntityModelConverterTest {
     user.setEmail("email@mail.com");
     user.setPassword("pass24ER");
     user.setPosition("junior");
-    user.setDepartment("PR");
-    user.setRole("user");
+    user.setDepartment(new DepartmentEntity());
+    user.setRole(Role.USER);
     user.setActive(true);
     return user;
   }

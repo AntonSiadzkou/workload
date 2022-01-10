@@ -1,11 +1,11 @@
 package com.leverx.workload.user.web.controller;
 
-import com.leverx.workload.user.exception.NotValidUserException;
 import com.leverx.workload.user.service.UserService;
 import com.leverx.workload.user.service.converter.UserConverter;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.user.web.dto.request.UserRequestParams;
 import com.leverx.workload.user.web.dto.response.UserResponse;
+import com.leverx.workload.util.GeneralUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -14,10 +14,9 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.context.annotation.PropertySource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/users")
 @AllArgsConstructor
-@PropertySource("classpath:app.properties")
 @Api(tags = "User operations")
+@Slf4j
 public class UserController {
 
   private final UserService service;
@@ -57,12 +56,13 @@ public class UserController {
       @ApiParam(name = "size", defaultValue = "${page.size.default}",
           value = "Maximum number of items per page")
       @RequestParam(defaultValue = "${page.size.default}") int size,
-      @ApiParam(name = "sort", defaultValue = "${page.sort.column.default}",
+      @ApiParam(name = "sort", defaultValue = "${page.sort.user.default}",
           value = "A column to sort the selection")
-      @RequestParam(defaultValue = "${page.sort.column.default}") String column,
+      @RequestParam(defaultValue = "${page.sort.user.default}") String column,
       @ApiParam(name = "sort", defaultValue = "${page.sort.direction.default}",
           value = "A direction to sort the selection")
       @RequestParam(defaultValue = "${page.sort.direction.default}") String direction) {
+    log.info("Start getting all users");
     return service
         .findAllUsers(new UserRequestParams(firstName, email, page, size, column, direction))
         .stream().map(mapper::toResponse).toList();
@@ -76,6 +76,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public UserResponse getUserById(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start getting a user by id");
     return mapper.toResponse(service.findById(id));
   }
 
@@ -88,7 +89,8 @@ public class UserController {
   public long createUser(
       @ApiParam(name = "user", value = "User information") @RequestBody @Valid UserBodyParams user,
       BindingResult bindingResult) {
-    checkViolations(bindingResult);
+    log.info("Start saving a user to the database");
+    GeneralUtils.checkViolations(bindingResult);
     return service.createUser(user);
   }
 
@@ -100,7 +102,8 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void updateUser(@ApiParam(name = "user", value = "User with updated information")
   @RequestBody @Valid UserBodyParams user, BindingResult bindingResult) {
-    checkViolations(bindingResult);
+    log.info("Start updating a user in the database");
+    GeneralUtils.checkViolations(bindingResult);
     service.updateUser(user);
   }
 
@@ -112,18 +115,7 @@ public class UserController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void deleteUserById(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start deleting a user in the database");
     service.deleteUserById(id);
-  }
-
-  private void checkViolations(BindingResult bindingResult) {
-    if (bindingResult.hasErrors()) {
-      StringBuilder errors = new StringBuilder();
-      for (FieldError violation : bindingResult.getFieldErrors()) {
-        errors.append("['").append(violation.getField()).append("': '")
-            .append(violation.getRejectedValue()).append("': '")
-            .append(violation.getDefaultMessage()).append("']; ");
-      }
-      throw new NotValidUserException("User has not valid fields. " + errors);
-    }
   }
 }
