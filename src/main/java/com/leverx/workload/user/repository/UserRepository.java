@@ -1,6 +1,7 @@
 package com.leverx.workload.user.repository;
 
 import com.leverx.workload.user.repository.entity.UserEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,4 +18,6 @@ public interface UserRepository
   Optional<UserEntity> findById(Long id);
 
   Optional<UserEntity> findByEmail(String email);
+
+  List<UserEntity> findAllByActiveAndRole(boolean isActive, String role);
 }

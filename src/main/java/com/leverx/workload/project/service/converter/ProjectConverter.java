@@ -25,10 +25,6 @@ public class ProjectConverter {
   }
 
   public ProjectResponse toResponse(ProjectEntity entity) {
-    mapper.typeMap(ProjectEntity.class, ProjectResponse.class)
-        .addMappings(mapper -> mapper.skip(ProjectResponse::setStartDate))
-        .addMappings(mapper -> mapper.skip(ProjectResponse::setEndDate))
-        .setPostConverter(toResponseConverter());
     return Objects.isNull(entity) ? null : mapper.map(entity, ProjectResponse.class);
   }
 
@@ -41,19 +37,6 @@ public class ProjectConverter {
               : LocalDate.parse(source.getStartDate()));
       destination.setEndDate((Objects.isNull(source) || Objects.isNull(source.getEndDate())) ? null
           : LocalDate.parse(source.getEndDate()));
-      return context.getDestination();
-    };
-  }
-
-  public Converter<ProjectEntity, ProjectResponse> toResponseConverter() {
-    return context -> {
-      ProjectEntity source = context.getSource();
-      ProjectResponse destination = context.getDestination();
-      destination
-          .setStartDate((Objects.isNull(source) || Objects.isNull(source.getStartDate())) ? null
-              : source.getStartDate().toString());
-      destination.setEndDate((Objects.isNull(source) || Objects.isNull(source.getEndDate())) ? null
-          : source.getEndDate().toString());
       return context.getDestination();
     };
   }

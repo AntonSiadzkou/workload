@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = "Project operations")
 public class ProjectController {
 
-  private ProjectService service;
-  private ProjectConverter mapper;
+  private final ProjectService service;
+  private final ProjectConverter mapper;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)

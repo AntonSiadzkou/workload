@@ -27,8 +27,8 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 public class ProjectServiceImpl implements ProjectService {
 
-  private ProjectRepository repository;
-  private ProjectConverter mapper;
+  private final ProjectRepository repository;
+  private final ProjectConverter mapper;
 
   @Override
   @Transactional(readOnly = true)

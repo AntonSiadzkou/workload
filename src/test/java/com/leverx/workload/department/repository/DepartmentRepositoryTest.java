@@ -34,7 +34,7 @@ class DepartmentRepositoryTest {
     String title = "HR";
     DepartmentEntity expected = new DepartmentEntity(1L, "HR", null);
     UserEntity user = new UserEntity(1, "John", "Tudor", "mail1@joy.com", "pass24WQ", "junior",
-        expected, "user", true);
+        expected, "user", true, new ArrayList<>());
     List<UserEntity> users = new ArrayList<>();
     users.add(user);
     expected.setUsers(users);

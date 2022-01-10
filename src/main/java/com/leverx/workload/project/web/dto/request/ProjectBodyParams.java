@@ -15,5 +15,6 @@ public class ProjectBodyParams {
   @NotNull
   private String startDate;
 
+  @NotNull
   private String endDate;
 }
