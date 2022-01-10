@@ -6,17 +6,20 @@ import com.leverx.workload.project.web.dto.responce.ProjectResponse;
 import java.time.LocalDate;
 import java.util.Objects;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
+@Slf4j
 public class ProjectConverter {
 
   private final ModelMapper mapper;
 
   public ProjectEntity toEntity(ProjectBodyParams request) {
+    log.info("Converting project: from body params to entity");
     mapper.typeMap(ProjectBodyParams.class, ProjectEntity.class)
         .addMappings(mapper -> mapper.skip(ProjectEntity::setStartDate))
         .addMappings(mapper -> mapper.skip(ProjectEntity::setEndDate))
@@ -25,6 +28,7 @@ public class ProjectConverter {
   }
 
   public ProjectResponse toResponse(ProjectEntity entity) {
+    log.info("Converting project: from entity to response");
     return Objects.isNull(entity) ? null : mapper.map(entity, ProjectResponse.class);
   }
 

@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/projects")
 @AllArgsConstructor
 @Api(tags = "Project operations")
+@Slf4j
 public class ProjectController {
 
   private final ProjectService service;
@@ -60,6 +62,7 @@ public class ProjectController {
       @ApiParam(name = "sort", defaultValue = "${page.sort.direction.default}",
           value = "A direction to sort the selection")
       @RequestParam(defaultValue = "${page.sort.direction.default}") String direction) {
+    log.info("Start getting all projects");
     return service
         .findAllProjects(
             new ProjectRequestParams(startDate, endDate, page, size, column, direction))
@@ -74,6 +77,7 @@ public class ProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public ProjectResponse getProjectById(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    log.info("Start getting a project by id");
     return mapper.toResponse(service.findById(id));
   }
 
@@ -85,6 +89,7 @@ public class ProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public long createProject(@ApiParam(name = "project", value = "Project information") @RequestBody
   @Valid ProjectBodyParams project, BindingResult bindingResult) {
+    log.info("Start saving a project to the database");
     GeneralUtils.checkViolations(bindingResult);
     return service.createProject(project);
   }
@@ -97,6 +102,7 @@ public class ProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void updateProject(@ApiParam(name = "project", value = "Project with updated information")
   @RequestBody @Valid ProjectBodyParams project, BindingResult bindingResult) {
+    log.info("Start updating a project in the database");
     GeneralUtils.checkViolations(bindingResult);
     service.updateProject(project);
   }
@@ -109,6 +115,7 @@ public class ProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public void deleteProjectById(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    log.info("Start deleting a project in the database");
     service.deleteProjectById(id);
   }
 }

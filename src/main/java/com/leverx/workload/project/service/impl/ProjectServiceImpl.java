@@ -12,6 +12,7 @@ import java.util.List;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ import org.springframework.validation.annotation.Validated;
 @Service
 @AllArgsConstructor
 @Validated
+@Slf4j
 public class ProjectServiceImpl implements ProjectService {
 
   private final ProjectRepository repository;
@@ -35,46 +37,56 @@ public class ProjectServiceImpl implements ProjectService {
   public List<ProjectEntity> findAllProjects(@NotNull ProjectRequestParams params) {
     Pageable pageable = PageRequest.of(params.page(), params.size(),
         Sort.by(new Order(getSortDirection(params.sortDirection()), params.sortColumn())));
-
     Specification<ProjectEntity> spec =
         Specification.where(ProjectSpecifications.greaterThanStartDate(params.startDate()))
             .and(ProjectSpecifications.lessThanEndDate(params.endDate()));
-
+    log.info("Searching all projects with pagination and specifications");
     Page<ProjectEntity> pageData = repository.findAll(spec, pageable);
+    log.info("Successfully found all projects");
     return pageData.getContent();
   }
 
   @Override
   @Transactional(readOnly = true)
   public ProjectEntity findById(@NotNull Long id) {
-    return repository.findById(id).orElseThrow(
+    log.info("Searching a project with id:" + id);
+    ProjectEntity project = repository.findById(id).orElseThrow(
         () -> new EntityNotFoundException(String.format("Project with id=%s not found", id)));
+    log.info("Successfully found a project with id:" + id);
+    return project;
   }
 
   @Override
   @Transactional
   public long createProject(@NotNull ProjectBodyParams project) {
+    log.info("Creating a new project");
     ProjectEntity entity = mapper.toEntity(project);
     checkDates(entity);
-    return repository.save(entity).getId();
+    long id = repository.save(entity).getId();
+    log.info("Successfully created a project with id:" + id);
+    return id;
   }
 
   @Override
   @Transactional
   public void updateProject(@NotNull ProjectBodyParams project) {
+    log.info("Updating a project with id: " + project.getId());
     repository.findById(project.getId()).orElseThrow(
         () -> new EntityNotFoundException("Unable to update project. Project doesn't exist."));
     ProjectEntity entity = mapper.toEntity(project);
     checkDates(entity);
     repository.save(mapper.toEntity(project));
+    log.info("Successfully updated a project with id:" + entity.getId());
   }
 
   @Override
   @Transactional
   public void deleteProjectById(@NotNull Long id) {
+    log.info("Deleting a project with id: " + id);
     repository.findById(id).orElseThrow(
         () -> new EntityNotFoundException("Unable to delete project. Project doesn't exist."));
     repository.deleteById(id);
+    log.info("Successfully deleted a project with id:" + id);
   }
 
   private Sort.Direction getSortDirection(String direction) {

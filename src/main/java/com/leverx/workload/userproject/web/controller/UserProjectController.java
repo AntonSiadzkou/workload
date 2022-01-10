@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @AllArgsConstructor
 @Api(tags = "User and project relations operations")
+@Slf4j
 public class UserProjectController {
 
   private final UserProjectService service;
@@ -41,6 +43,7 @@ public class UserProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public UserWithAssignedProjectsResponse getAllUserProjectsByUserId(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start getting all assigned projects for a specific user");
     return service.findAllUserProjectsByUserId(id);
   }
 
@@ -51,6 +54,7 @@ public class UserProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public UserWithAssignedProjectsResponse getAllCurrentUserProjectsByUserId(
       @ApiParam(name = "id", value = "Identifier of user") @PathVariable @Valid Long id) {
+    log.info("Start getting all current and future assigned projects for a specific user");
     return service.findAllCurrentUserProjectsByUserId(id);
   }
 
@@ -61,6 +65,7 @@ public class UserProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public ProjectWithAssignedUsersResponse getAllUserProjectsByProjectId(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    log.info("Start getting all assigned users for a specific project");
     return service.findAllUserProjectsByProjectId(id);
   }
 
@@ -71,13 +76,14 @@ public class UserProjectController {
       @ApiResponse(code = 500, message = "Internal server error")})
   public ProjectWithAssignedUsersResponse getAllCurrentUserProjectsByProjectId(
       @ApiParam(name = "id", value = "Identifier of project") @PathVariable @Valid Long id) {
+    log.info("Start getting all current and future assigned users for a specific project");
     return service.findAllCurrentUserProjectsByProjectId(id);
   }
 
   @GetMapping("/projects/users/available")
   @ResponseStatus(HttpStatus.OK)
   @ApiOperation(
-      value = "Get list of available users (users without project) within a specified period from specified date.")
+      value = "Get list of available users (users without project) within a specified period from specified date")
   @ApiResponses(value = {@ApiResponse(code = 200, message = "Success"),
       @ApiResponse(code = 500, message = "Internal server error")})
   public List<UserResponse> getAllAvailableUsers(
@@ -86,6 +92,8 @@ public class UserProjectController {
       @RequestParam(defaultValue = "${available.days}") int days,
       @ApiParam(name = "date", defaultValue = "current date", value = "Specified date")
       @RequestParam(required = false) String date) {
+    log.info(
+        "Start getting available users without project within a specified period from specified date");
     return service.findAllAvailableUsers(days, date).stream().map(userMapper::toResponse).toList();
   }
 
@@ -98,6 +106,7 @@ public class UserProjectController {
   public void addUserToProject(
       @ApiParam(name = "userProject", value = "Project and user with assign and cancel dates")
       @RequestBody @Valid UserProjectBodyParams userProject, BindingResult bindingResult) {
+    log.info("Start adding a specific user to a specific project for a period");
     GeneralUtils.checkViolations(bindingResult);
     service.saveUserProject(userProject);
   }
@@ -112,6 +121,7 @@ public class UserProjectController {
       @ApiParam(name = "projectId", value = "Identifier of project") @PathVariable
       @Valid Long projectId,
       @ApiParam(name = "userId", value = "Identifier of user") @PathVariable @Valid Long userId) {
+    log.info("Start deleting a specific user from a specific project");
     service.deleteUserProject(projectId, userId);
   }
 }
