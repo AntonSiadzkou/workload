@@ -9,6 +9,7 @@ import com.leverx.workload.project.repository.ProjectRepository;
 import com.leverx.workload.project.repository.entity.ProjectEntity;
 import com.leverx.workload.project.service.converter.ProjectConverter;
 import com.leverx.workload.project.web.dto.responce.ProjectResponse;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.UserRepository;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.service.converter.UserConverter;
@@ -191,13 +192,13 @@ class UserProjectServiceImplTest {
     List<UserEntity> expected = new ArrayList<>();
     expected.add(user);
 
-    given(userRepository.findAllByActiveAndRole(true, "user")).willReturn(activeUsers);
+    given(userRepository.findAllByActiveAndRole(true, Role.USER)).willReturn(activeUsers);
     given(userProjectRepository.findAllActiveProjectWithinPeriod(LocalDate.of(2021, 1, 1),
         LocalDate.of(2021, 1, 11))).willReturn(userProjectsWithinPeriod);
 
     List<UserEntity> actual = underTest.findAllAvailableUsers(days, date);
 
-    verify(userRepository).findAllByActiveAndRole(true, "user");
+    verify(userRepository).findAllByActiveAndRole(true, Role.USER);
     verify(userProjectRepository).findAllActiveProjectWithinPeriod(LocalDate.of(2021, 1, 1),
         LocalDate.of(2021, 1, 11));
 

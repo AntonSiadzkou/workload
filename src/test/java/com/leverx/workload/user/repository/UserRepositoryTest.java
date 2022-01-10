@@ -7,6 +7,7 @@ import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.repository.specification.UserSpecifications;
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ class UserRepositoryTest {
   void emailAndUser_UserExistsAndTheSame_EqualUsers() {
     String email = "mail3@joy.com";
     UserEntity expected = new UserEntity(3, "John", "Archibald", email, "pass24WQ", "senior",
-        new DepartmentEntity(), "admin", true, new ArrayList<>());
+        new DepartmentEntity(), Role.ADMIN, true, new ArrayList<>());
 
     UserEntity actual = underTest.findByEmail(email).orElse(null);
 
@@ -57,7 +58,7 @@ class UserRepositoryTest {
   void idAndUser_UserExistsAndTheSame_EqualUsers() {
     long id = 2;
     UserEntity expected = new UserEntity(2, "Zoey", "Aco", "mail2@joy.com", "pass24WQ", "lead",
-        new DepartmentEntity(), "user", true, new ArrayList<>());
+        new DepartmentEntity(), Role.USER, true, new ArrayList<>());
 
     UserEntity actual = underTest.findById(id).orElse(null);
 

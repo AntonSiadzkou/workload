@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
 import com.leverx.workload.department.web.dto.responce.DepartmentResponse;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import com.leverx.workload.user.web.dto.request.UserBodyParams;
 import com.leverx.workload.user.web.dto.response.UserResponse;
@@ -27,7 +28,7 @@ class EntityModelConverterTest {
 
   @BeforeEach
   void setUp() {
-    underTest = new UserConverter(mapper);
+    // underTest = new UserConverter(mapper);
   }
 
   @Test
@@ -96,7 +97,7 @@ class EntityModelConverterTest {
     user.setEmail("email@mail.com");
     user.setPosition("junior");
     user.setDepartment(new DepartmentResponse());
-    user.setRole("user");
+    user.setRole("ROLE_USER");
     user.setActive(true);
     return user;
   }
@@ -110,7 +111,7 @@ class EntityModelConverterTest {
     user.setPassword("pass24ER");
     user.setPosition("junior");
     user.setDepartment(new DepartmentEntity());
-    user.setRole("user");
+    user.setRole(Role.USER);
     user.setActive(true);
     return user;
   }

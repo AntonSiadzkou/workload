@@ -7,6 +7,7 @@ import com.leverx.workload.config.H2TestConfig;
 import com.leverx.workload.config.MapperConfig;
 import com.leverx.workload.config.WebConfig;
 import com.leverx.workload.department.repository.entity.DepartmentEntity;
+import com.leverx.workload.security.service.model.Role;
 import com.leverx.workload.user.repository.entity.UserEntity;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,7 @@ class DepartmentRepositoryTest {
     String title = "HR";
     DepartmentEntity expected = new DepartmentEntity(1L, "HR", null);
     UserEntity user = new UserEntity(1, "John", "Tudor", "mail1@joy.com", "pass24WQ", "junior",
-        expected, "user", true, new ArrayList<>());
+        expected, Role.USER, true, new ArrayList<>());
     List<UserEntity> users = new ArrayList<>();
     users.add(user);
     expected.setUsers(users);
