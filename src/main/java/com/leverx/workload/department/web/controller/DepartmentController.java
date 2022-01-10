@@ -37,9 +37,9 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 public class DepartmentController {
 
-  private DepartmentService service;
-  private DepartmentConverter departmentMapper;
-  private UserConverter userMapper;
+  private final DepartmentService service;
+  private final DepartmentConverter departmentMapper;
+  private final UserConverter userMapper;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)

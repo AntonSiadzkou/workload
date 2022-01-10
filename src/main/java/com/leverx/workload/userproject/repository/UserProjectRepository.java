@@ -27,4 +27,6 @@ public interface UserProjectRepository extends JpaRepository<UserProjectEntity, 
       + "OR (up.assignDate < :fromDate AND up.cancelDate > :tillDate)")
   List<UserProjectEntity> findAllActiveProjectWithinPeriod(@Param("fromDate") LocalDate fromDate,
       @Param("tillDate") LocalDate tillDate);
+
+  List<UserProjectEntity> findAllByCancelDateBetween(LocalDate from, LocalDate till);
 }

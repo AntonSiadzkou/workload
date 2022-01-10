@@ -21,17 +21,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private static final String[] PERMIT_ALL = new String[] {"/auth/**", "/v2/api-docs"};
   private static final String[] COMMON_GET_PERMISSIONS = new String[] {"/users", "/departments",
-      "/projects", "/projects/*/users/**", "/users/*/projects/**"};
+      "/projects", "/projects/*/users/**", "/users/*/projects/**", "/report/**"};
   private static final String[] USER_GET_PERMISSIONS =
       new String[] {"/users/**", "/departments/**", "/projects/**"};
   private static final String[] COMMON_PUT_PERMISSIONS = new String[] {"/projects/users"};
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.httpBasic().disable().csrf().disable() // todo do we need to enable crsf ?
-        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-        .authorizeRequests().antMatchers(PERMIT_ALL).permitAll()
-        .antMatchers(HttpMethod.GET, COMMON_GET_PERMISSIONS)
+    http.httpBasic().disable().csrf().disable().sessionManagement()
+        .sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+        .antMatchers(PERMIT_ALL).permitAll().antMatchers(HttpMethod.GET, COMMON_GET_PERMISSIONS)
         .hasAnyRole(Role.USER.name(), Role.ADMIN.name())
         .antMatchers(HttpMethod.GET, USER_GET_PERMISSIONS).hasRole(Role.USER.name())
         .antMatchers(HttpMethod.POST).hasRole(Role.ADMIN.name())
