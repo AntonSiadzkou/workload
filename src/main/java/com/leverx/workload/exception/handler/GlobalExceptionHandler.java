@@ -3,6 +3,7 @@ package com.leverx.workload.exception.handler;
 import com.leverx.workload.exception.DuplicatedValueException;
 import com.leverx.workload.exception.JwtAuthenticationException;
 import com.leverx.workload.exception.NotValidEntityException;
+import com.leverx.workload.exception.ReportDownloadException;
 import com.opencsv.exceptions.CsvRuntimeException;
 import java.time.format.DateTimeParseException;
 import javax.persistence.EntityNotFoundException;
@@ -81,4 +82,14 @@ public class GlobalExceptionHandler {
     return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
         request.getRequestURL().toString());
   }
+
+  @ExceptionHandler(ReportDownloadException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ExceptionMessage reportException(HttpServletRequest request, Exception e) {
+    log.warn(request.getRequestURL().toString() + " : " + HttpStatus.BAD_REQUEST.value() + " : "
+        + e.getMessage());
+    return new ExceptionMessage(HttpStatus.BAD_REQUEST.value(), e.getMessage(),
+        request.getRequestURL().toString());
+  }
+
 }
